@@ -1,3 +1,4 @@
+[![](readme_propelo.png)](#readme)
 # propelo-job-reporter
 Propelo's Jenkins Plugin to send reports about jobs' logs and metadata to the Propelo Service.
 <br />
