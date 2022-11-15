@@ -102,8 +102,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version><!--$NO-MVN-MAN-VER$ -->
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -295,7 +295,7 @@
         </repository>
     </repositories>
 
-    <pluginRepositories>8
+    <pluginRepositories>
         <pluginRepository>
             <id>repo.jenkins-ci.org</id>
             <url>https://repo.jenkins-ci.org/public/</url>
