@@ -32,9 +32,37 @@ Propelo's Jenkins Plugin to send reports about jobs' logs and metadata to the Pr
 
 
 4. Install the plugin
+   - Sign-in to Jenkins and select Manage Jenkins.
+   - Select “Manage Plugins”.
+   - Select the “Available plugins” tab.
+   - In the “Search Plugin” box, type "propelo"
+   - Install the plugin called "Propelo Job Reporter" by selecting it and clicking "Install without restart".
+   - Once the plugin installation is complete, the status will change to “Success". If it doesn't change to "Success" a restart might be needed
 
 
 5. Configure the plugin
+   - Sign-in to Jenkins and select Manage Jenkins.
+        > <img src="./docs/Config_Step_1.png" style="width: 400px; hight: 400px;" alt="Configuration Step 1"/>
+   - Select "Propelo Job Reporter".
+        > <img src="./docs/Config_Step_2.png" style="width: 400px; hight: 400px;" alt="Configuration Step 2"/>
+   - Set Jenkins Instance name. This name would appear on SEI UI.
+        > <img src="./docs/Config_Step_3.png" style="width: 400px; hight: 400px;" alt="Configuration Step 3"/>
+   - Set Propelo Api key. The api key can be obtained in the SEI (Propelo) UI.
+        > <img src="./docs/Config_Step_4.png" style="width: 400px; hight: 400px;" alt="Configuration Step 4"/>
+   - Set plugin directory. The work directory where the propelo plugin will store permanent and intermediate information. The jenkins process must have write access on this directory.  
+     **NOTE**: In most cases the default value should work and changing would not be needed.
+        > <img src="./docs/Config_Step_5.png" style="width: 400px; hight: 400px;" alt="Configuration Step 5"/>
+   - Set the Jenkins Username of the user who created the Jenkins user token. This field is needed only for Blue Ocean plugin specific data.  
+     **NOTE**: In most cases this can be left empty.
+        > <img src="./docs/Config_Step_6.png" style="width: 400px; hight: 400px;" alt="Configuration Step 6"/>
+   - Set the Jenkins User Token. [Instructions to generate Jenkins User Token](https://support.cloudbees.com/hc/en-us/articles/115003090592-How-to-re-generate-my-Jenkins-user-token).  
+     This field is needed only for Blue Ocean plugin specific data.  
+     **NOTE**: In most cases this can be left empty.
+        > <img src="./docs/Config_Step_7.png" style="width: 400px; hight: 400px;" alt="Configuration Step 7"/>
+   - Set "Trust " if required. If this is enabled, all certificates are trusted in network communication between Jenkins Plugin and Propelo's Saas.   
+     **NOTE**: This should be disabled by default. In specific cases involving network proxies this needs to be enabled.
+        > <img src="./docs/Config_Step_8.png" style="width: 400px; hight: 400px;" alt="Configuration Step 8"/>
+
 
 
 <br />
