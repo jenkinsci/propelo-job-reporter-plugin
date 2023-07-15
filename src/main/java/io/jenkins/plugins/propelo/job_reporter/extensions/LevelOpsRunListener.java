@@ -36,7 +36,9 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -199,20 +201,22 @@ public class LevelOpsRunListener extends RunListener<Run> {
             return;
         }
         String todayDirName = DateUtils.getDateFormattedDirName();
-        try {
-            Files.newDirectoryStream(
+
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(
                 dataDirectoryWithVersion.toPath(),
                 (entry) -> {
-                    boolean use = entry.getFileName().toString().equalsIgnoreCase(todayDirName);
+                    boolean use = !entry.getFileName().toString().equalsIgnoreCase(todayDirName);
                     LOGGER.log(Level.FINER, "Filtering files... accept {0}? {1}", new Object[]{todayDirName, use});
                     return use;
-                }).forEach(item -> {
-                    LOGGER.log(Level.FINE, "Deleting old historic report: {0}", item.toString());
-                    FileUtils.deleteQuietly(item.toFile());
-                });
+                })) {
+            ds.forEach(item -> {
+                LOGGER.log(Level.FINE, "Deleting old historic report: {0}", item.toString());
+                FileUtils.deleteQuietly(item.toFile());
+            });
+
         } catch (SecurityException | IOException e) {
             LOGGER.log(Level.SEVERE, e, () -> {
-                return String.format("Unable to delete all files from the historic reports in the directory '%s' other than %s", dataDirectoryWithVersion.toPath().toString(), todayDirName);
+                return String.format("Unable to delete all files from the historic reports in the directory '%s' other than %s", dataDirectoryWithVersion.toPath(), todayDirName);
             });
         }
     }

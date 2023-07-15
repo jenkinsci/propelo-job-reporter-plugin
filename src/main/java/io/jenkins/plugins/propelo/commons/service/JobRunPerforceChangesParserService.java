@@ -50,7 +50,22 @@ public class JobRunPerforceChangesParserService {
 
     private String getInputStreamAsString(InputStream inputStream) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+
+        /*
+        https://stackoverflow.com/questions/884007/correct-way-to-close-nested-streams-and-writers-in-java
+        Good:
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+          // do something with ois
+        }
+        Better:
+        try (FileInputStream fis = new FileInputStream(f); ObjectInputStream ois = new ObjectInputStream(fis)) {
+          // do something with ois
+        }
+        Reason: The try-with-resources is not aware of the inner FileInputStream, so if the ObjectInputStream constructor throws an exception,
+        the FileInputStream is never closed (until the garbage collector gets to it).
+         */
+        try ( InputStreamReader isr = new InputStreamReader(inputStream);
+              BufferedReader br = new BufferedReader(isr) ) {
             String line;
             while ((line = br.readLine()) != null) {
                 stringBuilder.append(line);

@@ -25,7 +25,21 @@ public class JobLogsService {
         File failedJobLogFile = getPathToLogFile(run.getParent().getRootDir().toString(), run.getNumber()).toFile();
         StringBuilder logsFromFile = new StringBuilder();
         String lineFromFile;
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(failedJobLogFile))) {
+        /*
+        https://stackoverflow.com/questions/884007/correct-way-to-close-nested-streams-and-writers-in-java
+        Good:
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+          // do something with ois
+        }
+        Better:
+        try (FileInputStream fis = new FileInputStream(f); ObjectInputStream ois = new ObjectInputStream(fis)) {
+          // do something with ois
+        }
+        Reason: The try-with-resources is not aware of the inner FileInputStream, so if the ObjectInputStream constructor throws an exception,
+        the FileInputStream is never closed (until the garbage collector gets to it).
+         */
+        try ( FileReader fr = new FileReader(failedJobLogFile);
+              BufferedReader bufferedReader = new BufferedReader(fr)) {
             while ((lineFromFile = bufferedReader.readLine()) != null) {
                 logsFromFile.append(lineFromFile);
                 logsFromFile.append(separator);
