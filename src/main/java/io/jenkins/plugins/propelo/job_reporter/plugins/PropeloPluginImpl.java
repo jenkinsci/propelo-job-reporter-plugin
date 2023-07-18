@@ -34,7 +34,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.UnknownHostException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -259,12 +261,15 @@ public class PropeloPluginImpl extends Plugin {
             LOGGER.log(Level.FINE, "Skipping old directories deletion: plugin_dir={0}, todays_data_directory_name={1}", new Object[]{expandedLevelOpsPluginDir, currentDataDirectoryWithVersion});
             return;
         }
-        try {
-            Files.newDirectoryStream(expandedLevelOpsPluginDir.toPath(), (path) -> {
-                boolean use = OLDER_DIRECTORIES_PATTERN.matcher(path.getFileName().toString()).find() && !currentDataDirectoryWithVersion.getName().equalsIgnoreCase(path.getFileName().toString());
-                LOGGER.log(Level.FINEST, "Filering files... accept {0}? {1}", new Object[]{path.toString(), use});
-                return use;
-            }).forEach(path -> {
+
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(
+                expandedLevelOpsPluginDir.toPath(),
+                (path) -> {
+                    boolean use = OLDER_DIRECTORIES_PATTERN.matcher(path.getFileName().toString()).find() && !currentDataDirectoryWithVersion.getName().equalsIgnoreCase(path.getFileName().toString());
+                    LOGGER.log(Level.FINEST, "Filering files... accept {0}? {1}", new Object[]{path.toString(), use});
+                    return use;
+                })) {
+            ds.forEach(path -> {
                 LOGGER.log(Level.FINER, "Deleting file: {0}", path);
                 FileUtils.deleteQuietly(path.toFile());
             });
