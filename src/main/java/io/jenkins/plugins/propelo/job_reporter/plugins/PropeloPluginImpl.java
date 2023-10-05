@@ -5,6 +5,7 @@ import hudson.Plugin;
 import hudson.scheduler.CronTab;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
+import io.jenkins.plugins.propelo.commons.models.ApplicationType;
 import io.jenkins.plugins.propelo.commons.models.JenkinsStatusInfo;
 import io.jenkins.plugins.propelo.commons.models.blue_ocean.Organization;
 import io.jenkins.plugins.propelo.commons.service.BlueOceanRestClient;
@@ -51,7 +52,7 @@ public class PropeloPluginImpl extends Plugin {
     private static final String DATA_DIR_NAME = "run-complete-data";
     public static final String PLUGIN_SHORT_NAME = "propelo-job-reporter";
     private Secret levelOpsApiKey = Secret.fromString("");
-    private String levelOpsPluginPath = "${JENKINS_HOME}/levelops-jenkin";
+    private String levelOpsPluginPath = "${JENKINS_HOME}/levelops-jenkins";
     private boolean trustAllCertificates = false;
     private String productIds = "";
     private String jenkinsInstanceName = "Jenkins Instance";
@@ -63,6 +64,7 @@ public class PropeloPluginImpl extends Plugin {
     private long heartbeatDuration = 60;
     private String bullseyeXmlResultPaths = "";
     private long configUpdatedAt = System.currentTimeMillis();
+    private ApplicationType applicationType;
     private static PropeloPluginImpl instance = null;
     private static final Pattern OLDER_DIRECTORIES_PATTERN = Pattern.compile("^(run-complete-data-)");
     
@@ -119,6 +121,7 @@ public class PropeloPluginImpl extends Plugin {
             if (StringUtils.isNotBlank(oldValues.getJenkinsUserToken())) {
                 instance.setJenkinsUserToken(Secret.fromString(oldValues.getJenkinsUserToken()));
             }
+            instance.setApplicationType("SEI_LEGACY");
             // persist the migrated values
             instance.save();
             // set migrated to true on the old configuration
@@ -153,6 +156,10 @@ public class PropeloPluginImpl extends Plugin {
 
     public Secret getLevelOpsApiKey() {
         return levelOpsApiKey;
+    }
+
+    public ApplicationType getApplicationType() {
+        return applicationType;
     }
 
     public void setLevelOpsApiKey(Secret levelOpsApiKey) {
@@ -345,6 +352,10 @@ public class PropeloPluginImpl extends Plugin {
 
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = ApplicationType.fromString(applicationType);
     }
 
     public String getProductIds() {
@@ -577,7 +588,7 @@ public class PropeloPluginImpl extends Plugin {
             }
         }
         if (!expandedPathMessage.isEmpty()) {
-            return FormValidation.ok(expandedPathMessage.substring(0, expandedPathMessage.length() - 2));
+            return FormValidation.ok(expandedPathMessage.substring(0, expandedPathMessage.length()));
         } else {
             return FormValidation.ok();
         }
