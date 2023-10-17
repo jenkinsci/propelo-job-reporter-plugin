@@ -22,8 +22,8 @@ import java.util.logging.Logger;
 public class LevelOpsMgmtLink extends ManagementLink {
     private static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
     public static final String PLUGIN_NAME = "propelo-job-reporter";
-    public static final String PLUGIN_DISPLAY_NAME = "Propelo Job Reporter";
-    public static final String PLUGIN_DESCRIPTION = "Reports back to Propelo after each Job Run with metadata and unsuccessful job logs.";
+    public static final String PLUGIN_DISPLAY_NAME = "Harness - SEI Job Reporter";
+    public static final String PLUGIN_DESCRIPTION = "Reports back to Harness - SEI after each Job Run with metadata and unsuccessful job logs.";
 
     @Override
     public String getDisplayName() {
@@ -58,11 +58,12 @@ public class LevelOpsMgmtLink extends ManagementLink {
                                @QueryParameter("bullseyeXmlResultPaths") final String bullseyeXmlResultPaths,
                                @QueryParameter("productIds") final String productIds,
                                @QueryParameter("jenkinsInstanceName") final String jenkinsInstanceName,
-                               @QueryParameter("trustAllCertificates") final boolean trustAllCertificates
+                               @QueryParameter("trustAllCertificates") final boolean trustAllCertificates,
+                               @QueryParameter("applicationType") final String applicationType
     ) throws IOException {
         LOGGER.log(Level.FINE, "Starting doSaveSettings, levelOpsApiKey = {0}, levelOpsPluginPath = {1}, " +
-                        "jenkinsBaseUrl = {2}, jenkinsUserName = {3}, jenkinsUserToken = {4}, productIds = {5}, jenkinsInstanceName = {6}, trustAllCertificates = {7}, bullseyeXmlResultPaths = {8}",
-                new Object[] {levelOpsApiKey, levelOpsPluginPath, jenkinsBaseUrl, jenkinsUserName, jenkinsUserToken, productIds, jenkinsInstanceName, trustAllCertificates,bullseyeXmlResultPaths});
+                        "jenkinsBaseUrl = {2}, jenkinsUserName = {3}, jenkinsUserToken = {4}, productIds = {5}, jenkinsInstanceName = {6}, trustAllCertificates = {7}, bullseyeXmlResultPaths = {8}, applicationType = {9}",
+                new Object[] {levelOpsApiKey, levelOpsPluginPath, jenkinsBaseUrl, jenkinsUserName, jenkinsUserToken, productIds, jenkinsInstanceName, trustAllCertificates,bullseyeXmlResultPaths, applicationType});
 
         Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
 
@@ -76,6 +77,7 @@ public class LevelOpsMgmtLink extends ManagementLink {
         plugin.setProductIds(productIds);
         plugin.setJenkinsInstanceName(jenkinsInstanceName);
         plugin.setTrustAllCertificates(trustAllCertificates);
+        plugin.setApplicationType(applicationType);
         plugin.save();
         LOGGER.log(Level.CONFIG, "Saving plugin settings done. plugin = {0}", plugin);
         rsp.sendRedirect(res.getContextPath() + "/" + PLUGIN_NAME);

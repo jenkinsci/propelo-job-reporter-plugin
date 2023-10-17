@@ -4,6 +4,10 @@ import java.nio.charset.Charset;
 
 public class Common {
     public static final String API_URL_PROD = "https://api.propelo.ai";
+    public static final String EU_API_URL_PROD = "https://eu1.api.propelo.ai";
+    public static final String ASIA_API_URL_PROD = "https://asia1.api.propelo.ai";
+    public static final String HARNESS_API_URL_PROD = "https://app.harness.io/sei/api";
+    public static final String HARNESS_COMPLIANCE_API_URL_PROD = "https://app3.harness.io/sei/api";
     public static final String API_URL_DEV = "https://testapi1.propelo.ai";
     public static final String API_URL_LOCAL = "http://localhost:8080";
     public static final String API_URL_EFFECTIVE = API_URL_PROD;
