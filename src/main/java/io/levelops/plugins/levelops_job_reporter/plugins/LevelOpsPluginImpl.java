@@ -30,7 +30,7 @@ public class LevelOpsPluginImpl {
     private static final String DATA_DIR_NAME = "run-complete-data";
     public static final String PLUGIN_SHORT_NAME = "propelo-job-reporter";
     private String levelOpsApiKey = "";
-    private String levelOpsPluginPath = "${JENKINS_HOME}/levelops-jenkins";
+    private String levelOpsPluginPath = "${JENKINS_HOME}/levelops-jenkin";
     private boolean trustAllCertificates = false;
     private String productIds = "";
     private String jenkinsInstanceName = "Jenkins Instance";
