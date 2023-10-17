@@ -52,7 +52,7 @@ public class PropeloPluginImpl extends Plugin {
     private static final String DATA_DIR_NAME = "run-complete-data";
     public static final String PLUGIN_SHORT_NAME = "propelo-job-reporter";
     private Secret levelOpsApiKey = Secret.fromString("");
-    private String levelOpsPluginPath = "${JENKINS_HOME}/levelops-jenkin";
+    private String levelOpsPluginPath = "${JENKINS_HOME}/levelops-jenkins";
     private boolean trustAllCertificates = false;
     private String productIds = "";
     private String jenkinsInstanceName = "Jenkins Instance";
