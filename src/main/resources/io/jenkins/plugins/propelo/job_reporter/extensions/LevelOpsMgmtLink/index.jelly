@@ -5,31 +5,38 @@
         <st:include it="${app}" page="sidepanel.jelly"/>
         <l:main-panel>
             <h1>
-                <img src="${rootURL}/plugin/${it.urlName}/images/propelo_logo.png" alt=""/> ${it.displayName} Configuration
+                <img src="${rootURL}/plugin/${it.urlName}/images/sei_logo.png" alt=""/> ${it.displayName} Configuration
             </h1>
 
             <f:form method="post" action="saveSettings">
-                <f:section title="Propelo API">
+                <f:section title="Harness - SEI API">
                     <f:entry title="Jenkins Instance Name" field="jenkinsInstanceName"
                         help="/plugin/${it.urlName}/help/help-jenkinsInstanceName.html">
                         <f:textbox value="${it.configuration.jenkinsInstanceName}" name="jenkinsInstanceName"
                             checkUrl="'${rootURL}/plugin/${it.urlName}/checkJenkinsInstanceName?value='+escape(this.value)"/>
                     </f:entry>
 
-                    <f:entry title="Propelo API Key" description="Propelo API Key Obtained from the Propelo webapp." field="levelOpsApiKey"
+                    <f:entry title="SEI API Key" description="SEI API Key Obtained from the Harness SEI webapp." field="levelOpsApiKey"
                         help="/plugin/${it.urlName}/help/help-levelOpsApiKey.html">
                         <f:password value="${it.configuration.levelOpsApiKey}" name="levelOpsApiKey"
                             checkUrl="'${rootURL}/plugin/${it.urlName}/checkLevelOpsApiKey?value='+escape(this.value)" checkMethod="post"/>
                     </f:entry>
-                    <f:entry title="Propelo Status" field="levelOpsStatus"
+                    <f:entry title="SEI Status" field="levelOpsStatus"
                         help="/plugin/${it.urlName}/help/help-jenkinsStatus.html">
                         <f:readOnlyTextbox value="${it.jenkinsStatus}" name="levelOpsStatus"
                        checkUrl="'${rootURL}/plugin/${it.urlName}/checkLevelOpsStatus?value='+escape(this.value)"/>
                     </f:entry>
+                    <f:entry name="applicationType" title="Choose Application Type" field="applicationType">
+                        <select name="applicationType">
+                            <option value="SEI-Harness">SEI-Harness</option>
+                            <option value="SEI-Harness-Compliance">SEI-Harness-Compliance</option>
+                            <option value="SEI-Legacy">SEI-Legacy</option>
+                        </select>
+                    </f:entry>
                 </f:section>
 
                 <f:section title="Monitoring settings">
-                    <f:entry title="Propelo Plugins Directory" field="levelOpsPluginPath"
+                    <f:entry title="SEI Plugins Directory" field="levelOpsPluginPath"
                         help="/plugin/${it.urlName}/help/help-levelOpsPluginPath.html">
                         <f:textbox value="${it.configuration.levelOpsPluginPath}" name="levelOpsPluginPath"
                             checkUrl="'${rootURL}/plugin/${it.urlName}/checkLevelOpsPluginPath?value='+escape(this.value)" checkMethod="post"/>
