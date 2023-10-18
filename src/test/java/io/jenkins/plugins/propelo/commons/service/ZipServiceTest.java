@@ -59,7 +59,7 @@ public class ZipServiceTest {
         File unZipDir = null;
         try {
             File sourceDirectory = new File(this.getClass().getClassLoader().getResource("configs").toURI());
-            zipFile = File.createTempFile("testZip", ".zip");
+            zipFile = Files.createTempFile("testZip", ".zip").toFile();
             unZipDir = Files.createTempDirectory("testUnzip").toFile();
             ZipService zipService = new ZipService();
             zipService.zipDirectory(sourceDirectory, zipFile);
