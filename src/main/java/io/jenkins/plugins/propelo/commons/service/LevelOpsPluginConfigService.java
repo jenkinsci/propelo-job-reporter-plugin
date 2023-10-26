@@ -25,10 +25,6 @@ public class LevelOpsPluginConfigService {
     private static final File OVERRIDE_CONFIG_FILE = new File("/var/lib/jenkins/levelops_config.json");
     private static final ObjectMapper OBJECT_MAPPER = JsonUtils.buildObjectMapper();
     private static final LevelOpsConfig DEFAULT_LEVELOPS_CONFIG = new LevelOpsConfig(Common.API_URL_EFFECTIVE);
-    private static final LevelOpsConfig EU_LEVELOPS_CONFIG = new LevelOpsConfig(Common.EU_API_URL_PROD);
-    private static final LevelOpsConfig ASIA_LEVELOPS_CONFIG = new LevelOpsConfig(Common.ASIA_API_URL_PROD);
-    private static final LevelOpsConfig DEFAULT_HARNESS_LEVELOPS_CONFIG = new LevelOpsConfig(Common.HARNESS_API_URL_PROD);
-    private static final LevelOpsConfig DEFAULT_HARNESS_COMPLIANCE_LEVELOPS_CONFIG = new LevelOpsConfig(Common.HARNESS_COMPLIANCE_API_URL_PROD);
     private static final LevelOpsPluginConfigService INSTANCE = new LevelOpsPluginConfigService();
 
     private final LoadingCache<String, LevelOpsConfig> cache;
@@ -40,23 +36,9 @@ public class LevelOpsPluginConfigService {
                     @Override
                     public LevelOpsConfig load(String s) throws Exception {
                         try {
-                            ApplicationType applicationType = PropeloPluginImpl.getInstance().getApplicationType();
 
                             if (!OVERRIDE_CONFIG_FILE.exists()){
-                                switch (applicationType){
-                                    case SEI_LEGACY:
-                                        return DEFAULT_LEVELOPS_CONFIG;
-                                    case SEI_LEGACY_EU:
-                                        return EU_LEVELOPS_CONFIG;
-                                    case SEI_LEGACY_ASIA:
-                                        return ASIA_LEVELOPS_CONFIG;
-                                    case SEI_HARNESS:
-                                        return DEFAULT_HARNESS_LEVELOPS_CONFIG;
-                                    case SEI_HARNESS_COMPLIANCE:
-                                        return DEFAULT_HARNESS_COMPLIANCE_LEVELOPS_CONFIG;
-                                    default:
-                                        return DEFAULT_LEVELOPS_CONFIG;
-                                }
+                               return new LevelOpsConfig( PropeloPluginImpl.getInstance().getApplicationType().getTargetUrl());
                             }
 
                             String configDataString = new String(Files.readAllBytes(OVERRIDE_CONFIG_FILE.toPath()), UTF_8);
