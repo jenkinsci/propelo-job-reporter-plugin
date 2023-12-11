@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import io.jenkins.plugins.propelo.commons.models.ApplicationType;
 import io.jenkins.plugins.propelo.commons.models.LevelOpsConfig;
 import io.jenkins.plugins.propelo.commons.plugins.Common;
 import io.jenkins.plugins.propelo.commons.utils.JsonUtils;
-
+import io.jenkins.plugins.propelo.job_reporter.plugins.PropeloPluginImpl;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
@@ -34,10 +35,12 @@ public class LevelOpsPluginConfigService {
                 .build(new CacheLoader<String, LevelOpsConfig>() {
                     @Override
                     public LevelOpsConfig load(String s) throws Exception {
-                        if(!OVERRIDE_CONFIG_FILE.exists()) {
-                            return DEFAULT_LEVELOPS_CONFIG;
-                        }
                         try {
+
+                            if (!OVERRIDE_CONFIG_FILE.exists()){
+                               return new LevelOpsConfig( PropeloPluginImpl.getInstance().getApplicationType().getTargetUrl());
+                            }
+
                             String configDataString = new String(Files.readAllBytes(OVERRIDE_CONFIG_FILE.toPath()), UTF_8);
                             LevelOpsConfig levelOpsConfig = OBJECT_MAPPER.readValue(configDataString, LevelOpsConfig.class);
                             return levelOpsConfig;
@@ -48,6 +51,7 @@ public class LevelOpsPluginConfigService {
                     }
                 });
     }
+
     public LevelOpsConfig getLevelopsConfig() {
         try {
             return cache.get("DEFAULT");
