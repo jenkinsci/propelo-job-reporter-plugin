@@ -6,9 +6,9 @@ public enum ApplicationType {
 
     SEI_LEGACY("SEI-LEGACY-US", "https://api.propelo.ai"),
     SEI_LEGACY_EU("SEI-LEGACY-EU", "https://eu1.api.propelo.ai"),
-    SEI_LEGACY_ASIA("SEI-LEGACY-ASIA", "https://asia1.api.propelo.ai"),
-    SEI_HARNESS("SEI-HARNESS", "https://app.harness.io/sei/api"),
-    SEI_HARNESS_COMPLIANCE("SEI-HARNESS-COMPLIANCE", "https://app3.harness.io/sei/api");
+    SEI_HARNESS_PROD1("SEI-HARNESS-PROD1", "https://app.harness.io/prod1/sei/api"),
+    SEI_HARNESS_PROD2("SEI-HARNESS-PROD2", "https://app.harness.io/gratis/sei/api"),
+    SEI_HARNESS_PROD3("SEI-HARNESS-PROD3", "https://app3.harness.io/sei/api");
 
     private String applicationType;
     private String targetUrl;
@@ -27,14 +27,14 @@ public enum ApplicationType {
     }
 
     public static ApplicationType fromString(@Nullable String value) {
-        if(SEI_HARNESS.getApplicationType().equalsIgnoreCase(value)) {
-            return SEI_HARNESS;
-        }else if(SEI_HARNESS_COMPLIANCE.getApplicationType().equalsIgnoreCase(value)) {
-            return SEI_HARNESS_COMPLIANCE;
+        if(SEI_HARNESS_PROD1.getApplicationType().equalsIgnoreCase(value)) {
+            return SEI_HARNESS_PROD1;
+        }else if(SEI_HARNESS_PROD3.getApplicationType().equalsIgnoreCase(value)) {
+            return SEI_HARNESS_PROD3;
         }else if(SEI_LEGACY_EU.getApplicationType().equalsIgnoreCase(value)) {
             return SEI_LEGACY_EU;
-        }else if(SEI_LEGACY_ASIA.getApplicationType().equalsIgnoreCase(value)) {
-            return SEI_LEGACY_ASIA;
+        }else if(SEI_HARNESS_PROD2.getApplicationType().equalsIgnoreCase(value)) {
+            return SEI_HARNESS_PROD2;
         }else {
             return SEI_LEGACY;
         }

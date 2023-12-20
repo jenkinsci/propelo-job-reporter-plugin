@@ -13,13 +13,13 @@ public class LevelOpsPluginConfigServiceTest {
 
         PropeloPluginImpl propeloPlugin = new PropeloPluginImpl();
 
-        propeloPlugin.setApplicationType("SEI-Harness");
+        propeloPlugin.setApplicationType("SEI-Harness-PROD1");
         ApplicationType applicationType = PropeloPluginImpl.getInstance().getApplicationType();
-        Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS);
+        Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_PROD1);
 
-        propeloPlugin.setApplicationType("SEI-Harness-Compliance");
+        propeloPlugin.setApplicationType("SEI-Harness-PROD3");
         applicationType = PropeloPluginImpl.getInstance().getApplicationType();
-        Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_COMPLIANCE);
+        Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_PROD3);
 
         propeloPlugin.setApplicationType("SEI-Legacy");
         applicationType = PropeloPluginImpl.getInstance().getApplicationType();
@@ -29,8 +29,8 @@ public class LevelOpsPluginConfigServiceTest {
         applicationType = PropeloPluginImpl.getInstance().getApplicationType();
         Assert.assertEquals(applicationType, ApplicationType.SEI_LEGACY_EU);
 
-        propeloPlugin.setApplicationType("SEI-Legacy-ASIA");
+        propeloPlugin.setApplicationType("SEI-Harness-PROD2");
         applicationType = PropeloPluginImpl.getInstance().getApplicationType();
-        Assert.assertEquals(applicationType, ApplicationType.SEI_LEGACY_ASIA);
+        Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_PROD2);
     }
 }
