@@ -16,6 +16,17 @@
                             checkUrl="'${rootURL}/plugin/${it.urlName}/checkJenkinsInstanceName?value='+escape(this.value)"/>
                     </f:entry>
 
+                    <f:entry name="applicationType" description="Select the application type" title="Choose Application Type" field="applicationType">
+                        <select name="applicationType" selected = "${applicationType}">
+                            <option value="SEI-Harness-PROD1" selected="${applicationType.equals('SEI-Harness-PROD1') ? 'true':null}">SEI-Harness-PROD1</option>
+                            <option value="SEI-Harness-PROD2" selected="${applicationType.equals('SEI-Harness-PROD2') ? 'true':null}">SEI-Harness-PROD2</option>
+                            <option value="SEI-Harness-PROD3" selected="${applicationType.equals('SEI-Harness-PROD3') ? 'true':null}">SEI-Harness-PROD3</option>
+                            <option value="SEI-Legacy-US" selected="${applicationType.equals('SEI-Legacy-US') ? 'true':null}">SEI-Legacy-US</option>
+                            <option value="SEI-Legacy-EU" selected="${applicationType.equals('SEI-Legacy-EU') ? 'true':null}">SEI-Legacy-EU</option>
+                         </select>
+                    </f:entry>
+
+
                     <f:entry title="SEI API Key" description="SEI API Key Obtained from the Harness SEI webapp." field="levelOpsApiKey"
                         help="/plugin/${it.urlName}/help/help-levelOpsApiKey.html">
                         <f:password value="${it.configuration.levelOpsApiKey}" name="levelOpsApiKey"
@@ -26,15 +37,7 @@
                         <f:readOnlyTextbox value="${it.jenkinsStatus}" name="levelOpsStatus"
                        checkUrl="'${rootURL}/plugin/${it.urlName}/checkLevelOpsStatus?value='+escape(this.value)"/>
                     </f:entry>
-                    <f:entry name="applicationType" title="Choose Application Type" field="applicationType">
-                        <select name="applicationType">
-                            <option value="SEI-Harness">SEI-Harness</option>
-                            <option value="SEI-Harness-Compliance">SEI-Harness-Compliance</option>
-                            <option value="SEI-Legacy-US">SEI-Legacy-US</option>
-                            <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
-                            <option value="SEI-Legacy-ASIA">SEI-Legacy-ASIA</option>
-                        </select>
-                    </f:entry>
+
                 </f:section>
 
                 <f:section title="Monitoring settings">
