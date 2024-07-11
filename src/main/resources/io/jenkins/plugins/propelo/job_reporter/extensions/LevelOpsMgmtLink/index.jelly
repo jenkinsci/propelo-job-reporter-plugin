@@ -60,8 +60,7 @@
                     </f:entry>
                     <f:entry title="Jenkins User Token" description="Jenkins User Token" field="jenkinsUserToken"
                         help="/plugin/${it.urlName}/help/help-jenkinsUserToken.html">
-                        <f:password value="${it.configuration.jenkinsUserToken}" name="jenkinsUserToken"
-                            checkUrl="'${rootURL}/plugin/${it.urlName}/checkJenkinsUserToken?value='+escape(this.value)" checkMethod="post"/>
+                    <f:password value="${it.configuration.jenkinsUserToken}" name="jenkinsUserToken"/>
                     </f:entry>
 
                     <f:optionalBlock title="Trust All Certificates"
