@@ -90,6 +90,11 @@ public class JobRunCompleteDataService {
         if(jobRunDetail == null){
             return null;
         }
+        if(StringUtils.isEmpty(plugin.getJenkinsUserName())
+                || plugin.getJenkinsUserToken() == null
+                || StringUtils.isEmpty(plugin.getJenkinsUserToken().getPlainText())) {
+            return null;
+        }
 
         BlueOceanRestClient restClient = new BlueOceanRestClient(plugin.getJenkinsBaseUrl(), plugin.getJenkinsUserName(), plugin.getJenkinsUserToken().getPlainText(), plugin.isTrustAllCertificates(), mapper, proxyConfig);
 
