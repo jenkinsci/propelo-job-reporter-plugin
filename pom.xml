@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.4</version>
+        <version>4.53</version>
         <relativePath />
     </parent>
 
@@ -17,7 +17,7 @@
     <version>${revision}${changelist}</version>
 
     <name>Propelo's Job Reporter</name>
-    
+
     <description>Reports back to Propelo after each Job Run with metadata and unsuccessful job logs.</description>
     <!-- <display-info>ok</display-info> -->
     <url>https://app.propelo.ai</url>
@@ -93,8 +93,8 @@
         <spotbugs.version>4.7.3</spotbugs.version>
         <findbugs.skip>true</findbugs.skip>
         <spotbugs.skip>true</spotbugs.skip>
-        <java.level>8</java.level>
-        <jenkins.version>2.200</jenkins.version>
+        <java.level>17</java.level>
+        <jenkins.version>2.361.4</jenkins.version>
     </properties>
 
     <build>
@@ -102,10 +102,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.2</version><!--$NO-MVN-MAN-VER$ -->
+                <version>3.8.1</version><!--$NO-MVN-MAN-VER$ -->
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -286,7 +286,7 @@
     </dependencies>
 
     <repositories>
-         <repository>
+        <repository>
             <id>central</id>
             <name>central</name>
             <url>https://repo.maven.apache.org/maven2</url>

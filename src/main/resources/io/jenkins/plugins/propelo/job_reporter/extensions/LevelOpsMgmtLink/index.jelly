@@ -17,13 +17,52 @@
                     </f:entry>
 
                     <f:entry name="applicationType" description="Select the application type" title="Choose Application Type" field="applicationType">
-                        <select name="applicationType" selected = "${applicationType}">
-                            <option value="SEI-Harness-PROD1" selected="${applicationType.equals('SEI-Harness-PROD1') ? 'true':null}">SEI-Harness-PROD1</option>
-                            <option value="SEI-Harness-PROD2" selected="${applicationType.equals('SEI-Harness-PROD2') ? 'true':null}">SEI-Harness-PROD2</option>
-                            <option value="SEI-Harness-PROD3" selected="${applicationType.equals('SEI-Harness-PROD3') ? 'true':null}">SEI-Harness-PROD3</option>
-                            <option value="SEI-Legacy-US" selected="${applicationType.equals('SEI-Legacy-US') ? 'true':null}">SEI-Legacy-US</option>
-                            <option value="SEI-Legacy-EU" selected="${applicationType.equals('SEI-Legacy-EU') ? 'true':null}">SEI-Legacy-EU</option>
-                         </select>
+                        <select name="applicationType">
+                            <j:choose>
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD1'}">
+                                    <option value="SEI-Harness-PROD1" selected="">SEI-Harness-PROD1</option>
+                                    <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
+                                    <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Legacy-US">SEI-Legacy-US</option>
+                                    <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
+                                </j:when>
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD2'}">
+                                    <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
+                                    <option value="SEI-Harness-PROD2" selected="">SEI-Harness-PROD2</option>
+                                    <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Legacy-US">SEI-Legacy-US</option>
+                                    <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
+                                </j:when>
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD3'}">
+                                    <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
+                                    <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
+                                    <option value="SEI-Harness-PROD3" selected="">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Legacy-US">SEI-Legacy-US</option>
+                                    <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
+                                </j:when>
+                                <j:when test="${it.configuration.applicationType == 'SEI_LEGACY'}">
+                                    <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
+                                    <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
+                                    <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Legacy-US" selected="">SEI-Legacy-US</option>
+                                    <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
+                                </j:when>
+                                <j:when test="${it.configuration.applicationType == 'SEI_LEGACY_EU'}">
+                                    <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
+                                    <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
+                                    <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Legacy-US">SEI-Legacy-US</option>
+                                    <option value="SEI-Legacy-EU" selected="">SEI-Legacy-EU</option>
+                                </j:when>
+                                <j:otherwise>
+                                    <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
+                                    <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
+                                    <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Legacy-US">SEI-Legacy-US</option>
+                                    <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
+                                </j:otherwise>
+                            </j:choose>
+                          </select>
                     </f:entry>
 
 
@@ -55,9 +94,9 @@
                     -->
                     <f:entry title="Jenkins User Name" field="jenkinsUserName"
                         help="/plugin/${it.urlName}/help/help-jenkinsUserName.html">
-                        <f:textbox value="${it.configuration.jenkinsUserName}" name="jenkinsUserName"
-                            checkUrl="'${rootURL}/plugin/${it.urlName}/checkJenkinsUserName?value='+escape(this.value)" checkMethod="post"/>
+                        <f:textbox value="${it.configuration.jenkinsUserName}" name="jenkinsUserName"/>
                     </f:entry>
+
                     <f:entry title="Jenkins User Token" description="Jenkins User Token" field="jenkinsUserToken"
                         help="/plugin/${it.urlName}/help/help-jenkinsUserToken.html">
                     <f:password value="${it.configuration.jenkinsUserToken}" name="jenkinsUserToken"/>
