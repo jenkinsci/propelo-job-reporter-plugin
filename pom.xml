@@ -82,7 +82,7 @@
     </profiles>
 
     <properties>
-        <revision>1.0.32</revision>
+        <revision>1.0.33</revision>
         <!-- <changelist>999999-SNAPSHOT</changelist> -->
         <changelist></changelist>
         <product.build.sourceEncoding>UTF-8</product.build.sourceEncoding>
@@ -94,7 +94,7 @@
         <findbugs.skip>true</findbugs.skip>
         <spotbugs.skip>true</spotbugs.skip>
         <java.level>17</java.level>
-        <jenkins.version>2.361.4</jenkins.version>
+        <jenkins.version>2.426.3</jenkins.version>
     </properties>
 
     <build>

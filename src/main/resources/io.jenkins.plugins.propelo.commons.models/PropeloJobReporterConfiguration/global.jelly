@@ -1,0 +1,30 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:invisibleEntry title="Jenkins Instance Name" field="jenkinsInstanceName">
+        <f:textbox field="jenkinsInstanceName" />
+    </f:invisibleEntry>
+    <f:invisibleEntry title="Choose Application Type" field="applicationType">
+        <f:select>
+            <f:option value="SEI-Harness-PROD1">SEI-Harness-PROD1</f:option>
+            <f:option value="SEI-Harness-PROD2">SEI-Harness-PROD2</f:option>
+            <f:option value="SEI-Harness-PROD3">SEI-Harness-PROD3</f:option>
+            <f:option value="SEI-Legacy-US">SEI-Legacy-US</f:option>
+            <f:option value="SEI-Legacy-EU">SEI-Legacy-EU</f:option>
+        </f:select>
+    </f:invisibleEntry>
+    <f:invisibleEntry title="SEI API Key" field="levelOpsApiKey">
+        <f:password field="levelOpsApiKey" />
+    </f:invisibleEntry>
+    <f:invisibleEntry title="SEI Status" field="levelOpsStatus">
+        <f:readOnlyTextbox field="levelOpsStatus" />
+    </f:invisibleEntry>
+    <f:invisibleEntry title="SEI Plugins Directory" field="levelOpsPluginPath">
+        <f:textbox field="levelOpsPluginPath" />
+    </f:invisibleEntry>
+    <f:invisibleEntry title="Jenkins User Name" field="jenkinsUserName">
+        <f:textbox field="jenkinsUserName" />
+    </f:invisibleEntry>
+    <f:invisibleEntry title="Jenkins User Token" field="jenkinsUserToken">
+        <f:password field="jenkinsUserToken" />
+    </f:invisibleEntry>
+</j:jelly>

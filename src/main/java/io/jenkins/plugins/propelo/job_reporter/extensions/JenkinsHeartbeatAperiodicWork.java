@@ -26,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static io.jenkins.plugins.propelo.commons.models.PropeloJobReporterConfiguration.CONFIGURATION;
+
 @Log4j2
 @Extension
 public class JenkinsHeartbeatAperiodicWork extends AperiodicWork {
@@ -41,8 +43,12 @@ public class JenkinsHeartbeatAperiodicWork extends AperiodicWork {
     @Override
     public void doAperiodicRun() {
         try {
+            if(CONFIGURATION == null || CONFIGURATION.getApplicationType() == null){
+                LOGGER.log(Level.FINE, "No configuration found for Propelo Job Reporter's Plugin.");
+                return;
+            }
             monitorNow(System.currentTimeMillis());
-            plugin.isRegistered = true;
+            CONFIGURATION.isRegistered = true;
             JenkinsStatusService.getInstance().markHeartbeat(plugin.getExpandedLevelOpsPluginDir(), true);
         } catch (IOException e) {
             try {
@@ -85,10 +91,10 @@ public class JenkinsHeartbeatAperiodicWork extends AperiodicWork {
                 mapper.getTypeFactory().constructType(HeartbeatResponse.class));
         HeartbeatResponse.CiCdInstanceConfig configuration = heartbeatResponse.getConfiguration();
         if (configuration != null) {
-            plugin.setBullseyeXmlResultPath(configuration.getBullseyeReportPaths() != null ? configuration.getBullseyeReportPaths() : "");
-            plugin.setHeartbeatDuration(configuration.getHeartbeatDuration() != null ? configuration.getHeartbeatDuration() : 60);
-            plugin.setConfigUpdatedAt(System.currentTimeMillis());
-            plugin.save();
+            CONFIGURATION.setBullseyeXmlResultPaths(configuration.getBullseyeReportPaths() != null ? configuration.getBullseyeReportPaths() : "");
+            CONFIGURATION.setHeartbeatDuration(configuration.getHeartbeatDuration() != null ? configuration.getHeartbeatDuration() : 60);
+            CONFIGURATION.setConfigUpdatedAt(System.currentTimeMillis());
+            CONFIGURATION.save();
         }
         LOGGER.log(Level.INFO, "Heartbeat duration is : " + this.plugin.getHeartbeatDuration() +
                 " || Heartbeat response : " + genericResponse);

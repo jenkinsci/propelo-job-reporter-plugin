@@ -4,6 +4,8 @@ import hudson.Extension;
 import hudson.model.Hudson;
 import hudson.model.ManagementLink;
 import hudson.util.Secret;
+import io.jenkins.plugins.propelo.commons.models.ApplicationType;
+import io.jenkins.plugins.propelo.commons.models.PropeloJobReporterConfiguration;
 import io.jenkins.plugins.propelo.job_reporter.plugins.PropeloPluginImpl;
 import jenkins.model.Jenkins;
 
@@ -17,6 +19,8 @@ import java.lang.invoke.MethodHandles;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static io.jenkins.plugins.propelo.commons.models.PropeloJobReporterConfiguration.CONFIGURATION;
+
 
 @Extension
 public class LevelOpsMgmtLink extends ManagementLink {
@@ -24,7 +28,6 @@ public class LevelOpsMgmtLink extends ManagementLink {
     public static final String PLUGIN_NAME = "propelo-job-reporter";
     public static final String PLUGIN_DISPLAY_NAME = "Harness - SEI Job Reporter";
     public static final String PLUGIN_DESCRIPTION = "Reports back to Harness - SEI after each Job Run with metadata and unsuccessful job logs.";
-
     @Override
     public String getDisplayName() {
         return PLUGIN_DISPLAY_NAME;
@@ -68,23 +71,23 @@ public class LevelOpsMgmtLink extends ManagementLink {
         Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
 
         final PropeloPluginImpl plugin = PropeloPluginImpl.getInstance();
-        plugin.setLevelOpsApiKey(Secret.fromString(levelOpsApiKey));
-        plugin.setLevelOpsPluginPath(levelOpsPluginPath);
-        plugin.setJenkinsBaseUrl(Jenkins.get().getRootUrl());
-        plugin.setJenkinsUserName(jenkinsUserName);
-        plugin.setJenkinsUserToken(Secret.fromString(jenkinsUserToken));
-        plugin.setBullseyeXmlResultPath(bullseyeXmlResultPaths);
-        plugin.setProductIds(productIds);
-        plugin.setJenkinsInstanceName(jenkinsInstanceName);
-        plugin.setTrustAllCertificates(trustAllCertificates);
-        plugin.setApplicationType(applicationType);
-        plugin.save();
+        CONFIGURATION.setLevelOpsApiKey(Secret.fromString(levelOpsApiKey));
+        CONFIGURATION.setLevelOpsPluginPath(levelOpsPluginPath);
+        CONFIGURATION.setJenkinsBaseUrl(Jenkins.get().getRootUrl());
+        CONFIGURATION.setJenkinsUserName(jenkinsUserName);
+        CONFIGURATION.setJenkinsUserToken(Secret.fromString(jenkinsUserToken));
+        CONFIGURATION.setBullseyeXmlResultPaths(bullseyeXmlResultPaths);
+        CONFIGURATION.setProductIds(productIds);
+        CONFIGURATION.setJenkinsInstanceName(jenkinsInstanceName);
+        CONFIGURATION.setTrustAllCertificates(trustAllCertificates);
+        CONFIGURATION.setApplicationType(ApplicationType.fromString(applicationType));
+        CONFIGURATION.save();
         LOGGER.log(Level.CONFIG, "Saving plugin settings done. plugin = {0}", plugin);
         rsp.sendRedirect(res.getContextPath() + "/" + PLUGIN_NAME);
     }
 
-    public PropeloPluginImpl getConfiguration() {
-        return PropeloPluginImpl.getInstance();
+    public PropeloJobReporterConfiguration getConfiguration() {
+        return CONFIGURATION;
     }
 
     public String getJenkinsStatus() {
