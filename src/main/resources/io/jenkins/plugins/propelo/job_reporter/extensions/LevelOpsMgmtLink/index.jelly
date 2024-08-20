@@ -62,7 +62,7 @@
                                     <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
                                 </j:otherwise>
                             </j:choose>
-                          </select>
+                        </select>
                     </f:entry>
 
 
@@ -102,10 +102,9 @@
                     <f:password value="${it.configuration.jenkinsUserToken}" name="jenkinsUserToken"/>
                     </f:entry>
 
-                    <f:optionalBlock title="Trust All Certificates"
-                                            help="/plugin/${it.urlName}/help/help-trustAllCertificates.html"
-                                            checked="${it.configuration.trustAllCertificates}"
-                                            name="trustAllCertificates" />
+                    <f:entry title="${%Trust All Certificates}" field="trustAllCertificates">
+                        <f:checkbox checked="${it.configuration.trustAllCertificates}" name="trustAllCertificates" />
+                    </f:entry>
                 </f:section>
 
                 <f:section>
