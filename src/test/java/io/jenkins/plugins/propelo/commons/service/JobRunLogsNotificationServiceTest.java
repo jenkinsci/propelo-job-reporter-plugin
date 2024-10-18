@@ -52,7 +52,7 @@ public class JobRunLogsNotificationServiceTest {
         File completeDataZipFile = null;
         File tempFailedLogFile;
         try {
-            completeDataZipFile = File.createTempFile("tmp", ".zip");
+            completeDataZipFile = Files.createTempFile("tmp", ".zip").toFile();
             tempFailedLogFile = writeIntoFile();
             JobLogsService jobLogsService = new JobLogsService();
             String apiKey = "eyJrZXkiOiJqYyRDWkdqY2dqcEx1elNMQjg3MlV1S1d5OTRiWTR1T2EyaTVZc3lYNSZ0MlB3R1kkSyIsImlkIjoiMTY4MGQ3MGQtYzQ2MS00ZWFlLTgxYzYtYjk3ODBlMzRmOGFhIiwiY29tcGFueSI6InNjbXRlbmFudCJ9";
@@ -77,7 +77,7 @@ public class JobRunLogsNotificationServiceTest {
 
 
     private File writeIntoFile() throws IOException {
-        File tempFile = File.createTempFile("log", null);
+        File tempFile = Files.createTempFile("log", null).toFile();
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
             bw.append(EXPECTED_STRING);
             bw.append(separator);
