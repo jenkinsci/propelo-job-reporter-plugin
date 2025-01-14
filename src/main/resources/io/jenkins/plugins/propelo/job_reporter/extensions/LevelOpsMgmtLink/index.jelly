@@ -23,6 +23,7 @@
                                     <option value="SEI-Harness-PROD1" selected="">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
                                     <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                     <option value="SEI-Legacy-US">SEI-Legacy-US</option>
                                     <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
                                 </j:when>
@@ -30,6 +31,7 @@
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2" selected="">SEI-Harness-PROD2</option>
                                     <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                     <option value="SEI-Legacy-US">SEI-Legacy-US</option>
                                     <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
                                 </j:when>
@@ -37,6 +39,7 @@
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
                                     <option value="SEI-Harness-PROD3" selected="">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                     <option value="SEI-Legacy-US">SEI-Legacy-US</option>
                                     <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
                                 </j:when>
@@ -44,6 +47,7 @@
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
                                     <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                     <option value="SEI-Legacy-US" selected="">SEI-Legacy-US</option>
                                     <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
                                 </j:when>
@@ -51,13 +55,23 @@
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
                                     <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                     <option value="SEI-Legacy-US">SEI-Legacy-US</option>
                                     <option value="SEI-Legacy-EU" selected="">SEI-Legacy-EU</option>
+                                </j:when>
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_EU1'}">
+                                    <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
+                                    <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
+                                    <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Harness-EU1" selected="">SEI-Harness-EU1</option>
+                                    <option value="SEI-Legacy-US">SEI-Legacy-US</option>
+                                    <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
                                 </j:when>
                                 <j:otherwise>
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
                                     <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                     <option value="SEI-Legacy-US">SEI-Legacy-US</option>
                                     <option value="SEI-Legacy-EU">SEI-Legacy-EU</option>
                                 </j:otherwise>
