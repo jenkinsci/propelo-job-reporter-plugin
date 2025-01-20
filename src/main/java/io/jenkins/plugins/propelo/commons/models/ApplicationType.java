@@ -8,7 +8,8 @@ public enum ApplicationType {
     SEI_LEGACY_EU("SEI-LEGACY-EU", "https://eu1.api.propelo.ai"),
     SEI_HARNESS_PROD1("SEI-HARNESS-PROD1", "https://app.harness.io/prod1/sei/api"),
     SEI_HARNESS_PROD2("SEI-HARNESS-PROD2", "https://app.harness.io/gratis/sei/api"),
-    SEI_HARNESS_PROD3("SEI-HARNESS-PROD3", "https://app3.harness.io/sei/api");
+    SEI_HARNESS_PROD3("SEI-HARNESS-PROD3", "https://app3.harness.io/sei/api"),
+    SEI_HARNESS_EU1("SEI-HARNESS-EU1", "https://accounts.eu.harness.io/sei/api");
 
     private String applicationType;
     private String targetUrl;
@@ -35,6 +36,8 @@ public enum ApplicationType {
             return SEI_LEGACY_EU;
         }else if(SEI_HARNESS_PROD2.getApplicationType().equalsIgnoreCase(value)) {
             return SEI_HARNESS_PROD2;
+        }else if (SEI_HARNESS_EU1.getApplicationType().equalsIgnoreCase(value)) {
+            return SEI_HARNESS_EU1;
         }else {
             return SEI_LEGACY;
         }
