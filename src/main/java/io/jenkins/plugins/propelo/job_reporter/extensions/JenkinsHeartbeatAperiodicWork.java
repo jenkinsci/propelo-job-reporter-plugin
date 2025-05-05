@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static io.jenkins.plugins.propelo.commons.models.PropeloJobReporterConfiguration.CONFIGURATION;
+import static io.jenkins.plugins.propelo.job_reporter.extensions.PropeloJobReporterConfiguration.CONFIGURATION;
 
 @Log4j2
 @Extension

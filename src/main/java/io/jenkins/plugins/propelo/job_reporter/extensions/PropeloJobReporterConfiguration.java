@@ -1,7 +1,8 @@
-package io.jenkins.plugins.propelo.commons.models;
+package io.jenkins.plugins.propelo.job_reporter.extensions;
 
 import hudson.Extension;
 import hudson.util.Secret;
+import io.jenkins.plugins.propelo.commons.models.ApplicationType;
 import jenkins.model.GlobalConfiguration;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;

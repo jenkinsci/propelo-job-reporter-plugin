@@ -7,9 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.io.File;
-
-import static io.jenkins.plugins.propelo.commons.models.PropeloJobReporterConfiguration.CONFIGURATION;
+import static io.jenkins.plugins.propelo.job_reporter.extensions.PropeloJobReporterConfiguration.CONFIGURATION;
 
 public class LevelOpsPluginConfigServiceTest {
     @Rule
