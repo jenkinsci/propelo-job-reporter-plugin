@@ -8,6 +8,7 @@
             <f:option value="SEI-Harness-PROD1">SEI-Harness-PROD1</f:option>
             <f:option value="SEI-Harness-PROD2">SEI-Harness-PROD2</f:option>
             <f:option value="SEI-Harness-PROD3">SEI-Harness-PROD3</f:option>
+            <f:option value="SEI-HARNESS-EU1">SEI-HARNESS-EU1</f:option>
             <f:option value="SEI-Legacy-US">SEI-Legacy-US</f:option>
             <f:option value="SEI-Legacy-EU">SEI-Legacy-EU</f:option>
         </f:select>

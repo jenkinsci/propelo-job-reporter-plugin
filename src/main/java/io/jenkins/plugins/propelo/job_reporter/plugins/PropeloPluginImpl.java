@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import static io.jenkins.plugins.propelo.commons.plugins.Common.REPORTS_DIR_NAME;
-import static io.jenkins.plugins.propelo.commons.models.PropeloJobReporterConfiguration.CONFIGURATION;
+import static io.jenkins.plugins.propelo.job_reporter.extensions.PropeloJobReporterConfiguration.CONFIGURATION;
 
 @Extension
 public class PropeloPluginImpl extends Plugin {

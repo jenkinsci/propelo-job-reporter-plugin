@@ -5,7 +5,6 @@ import hudson.model.Hudson;
 import hudson.model.ManagementLink;
 import hudson.util.Secret;
 import io.jenkins.plugins.propelo.commons.models.ApplicationType;
-import io.jenkins.plugins.propelo.commons.models.PropeloJobReporterConfiguration;
 import io.jenkins.plugins.propelo.job_reporter.plugins.PropeloPluginImpl;
 import jenkins.model.Jenkins;
 
@@ -19,7 +18,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static io.jenkins.plugins.propelo.commons.models.PropeloJobReporterConfiguration.CONFIGURATION;
+import static io.jenkins.plugins.propelo.job_reporter.extensions.PropeloJobReporterConfiguration.CONFIGURATION;
 
 
 @Extension
