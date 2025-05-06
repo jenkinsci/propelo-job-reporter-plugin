@@ -1,30 +1,31 @@
 package io.jenkins.plugins.propelo.commons.service;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.regex.Matcher;
 
 import static io.jenkins.plugins.propelo.commons.service.JobRunParamsService.PARAM_TYPE_REGEX;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JobRunParamsServiceTest {
+class JobRunParamsServiceTest {
+
     @Test
-    public void testRegex(){
+    void testRegex() {
         String data = "(StringParameterValue) env_name='STAGING'";
         Matcher matcher = PARAM_TYPE_REGEX.matcher(data);
-        Assert.assertTrue(matcher.matches());
-        Assert.assertEquals("StringParameterValue", matcher.group(1));
+        assertTrue(matcher.matches());
+        assertEquals("StringParameterValue", matcher.group(1));
     }
 
     @Test
-    public void testRegex2(){
+    void testRegex2() {
         String data = "(TextParameterValue) boker_ids='broker1\n" +
                 "broker2\n" +
                 "broker3'";
         Matcher matcher = PARAM_TYPE_REGEX.matcher(data);
-        Assert.assertTrue(matcher.matches());
-        Assert.assertEquals("TextParameterValue", matcher.group(1));
+        assertTrue(matcher.matches());
+        assertEquals("TextParameterValue", matcher.group(1));
     }
-
 
 }

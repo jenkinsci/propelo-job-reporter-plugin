@@ -1,30 +1,31 @@
 package io.jenkins.plugins.propelo.commons.service;
 
-import io.jenkins.plugins.propelo.commons.service.JobFullNameConverter;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class JobFullNameConverterTest {
+class JobFullNameConverterTest {
+
     @Test
-    public void test(){
-        Assert.assertEquals(null, JobFullNameConverter.convertJobFullNameToJobNormalizedFullName(null));
-        Assert.assertEquals("", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName(""));
-        Assert.assertEquals("    ", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("    "));
+    void test() {
+        assertNull(JobFullNameConverter.convertJobFullNameToJobNormalizedFullName(null));
+        assertEquals("", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName(""));
+        assertEquals("    ", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("    "));
 
-        Assert.assertEquals("Pipe2", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("Pipe2"));
-        Assert.assertEquals("com.wordnik$swagger-codegen_2.9.1", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("com.wordnik$swagger-codegen_2.9.1"));
-        Assert.assertEquals("Update-commons", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("Update-commons"));
-        Assert.assertEquals("BBMaven1New/leetcode", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("BBMaven1New/jobs/leetcode"));
-        Assert.assertEquals("BBMaven1New/leetcode/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("BBMaven1New/jobs/leetcode/branches/master"));
-        Assert.assertEquals("Folder1/Folder2/BBMaven1New/leetcode", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode"));
-        Assert.assertEquals("Folder1/Folder2/BBMaven1New/leetcode/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode/branches/master"));
-        Assert.assertEquals("TestBlueOcean", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("TestBlueOcean"));
-        Assert.assertEquals("TestBlueOcean/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("TestBlueOcean/branches/master"));
+        assertEquals("Pipe2", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("Pipe2"));
+        assertEquals("com.wordnik$swagger-codegen_2.9.1", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("com.wordnik$swagger-codegen_2.9.1"));
+        assertEquals("Update-commons", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("Update-commons"));
+        assertEquals("BBMaven1New/leetcode", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("BBMaven1New/jobs/leetcode"));
+        assertEquals("BBMaven1New/leetcode/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("BBMaven1New/jobs/leetcode/branches/master"));
+        assertEquals("Folder1/Folder2/BBMaven1New/leetcode", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode"));
+        assertEquals("Folder1/Folder2/BBMaven1New/leetcode/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode/branches/master"));
+        assertEquals("TestBlueOcean", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("TestBlueOcean"));
+        assertEquals("TestBlueOcean/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("TestBlueOcean/branches/master"));
 
-        Assert.assertEquals("pipeline-1", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("pipeline-1"));
-        Assert.assertEquals("pipeline-1/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("pipeline-1/branches/master"));
-        Assert.assertEquals("pipeline-int-1", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("pipeline-int-1"));
-        Assert.assertEquals("pipeline-int-1/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("pipeline-int-1/branches/master"));
+        assertEquals("pipeline-1", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("pipeline-1"));
+        assertEquals("pipeline-1/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("pipeline-1/branches/master"));
+        assertEquals("pipeline-int-1", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("pipeline-int-1"));
+        assertEquals("pipeline-int-1/master", JobFullNameConverter.convertJobFullNameToJobNormalizedFullName("pipeline-int-1/branches/master"));
     }
 }

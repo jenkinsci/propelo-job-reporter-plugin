@@ -1,16 +1,17 @@
 package io.jenkins.plugins.propelo.commons.service;
 
 import io.jenkins.plugins.propelo.commons.models.JobNameDetails;
-
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class JobRunParserServiceTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class JobRunParserServiceTest {
+
     @Test
-    public void test() {
+    void test() {
         Map<String, JobNameDetails> expectedList = new HashMap<>();
         expectedList.put("Pipe2", new JobNameDetails("Pipe2", null, "Pipe2", null, "Pipe2"));
         expectedList.put("Pipe3", new JobNameDetails("Pipe3", null, "Pipe3", null, "Pipe3"));
@@ -31,7 +32,7 @@ public class JobRunParserServiceTest {
         expectedList.put("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode/branches/master", new JobNameDetails("leetcode", "master", "Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode/branches/master", null, "Folder1/Folder2/BBMaven1New/leetcode/master"));
         expectedList.put("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode2", new JobNameDetails("leetcode2", null, "Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode2", null, "Folder1/Folder2/BBMaven1New/leetcode2"));
         expectedList.put("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode2/branches/master", new JobNameDetails("leetcode2", "master", "Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode2/branches/master", null, "Folder1/Folder2/BBMaven1New/leetcode2/master"));
-        expectedList.put("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode3", new JobNameDetails("leetcode3",null,  "Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode3", null,  "Folder1/Folder2/BBMaven1New/leetcode3"));
+        expectedList.put("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode3", new JobNameDetails("leetcode3", null, "Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode3", null, "Folder1/Folder2/BBMaven1New/leetcode3"));
         expectedList.put("Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode3/branches/master", new JobNameDetails("leetcode3", "master", "Folder1/jobs/Folder2/jobs/BBMaven1New/jobs/leetcode3/branches/master", null, "Folder1/Folder2/BBMaven1New/leetcode3/master"));
         expectedList.put("pipeline-int-2", new JobNameDetails("pipeline-int-2", null, "pipeline-int-2", null, "pipeline-int-2"));
         expectedList.put("pipeline-int-2/branches/master", new JobNameDetails("pipeline-int-2", "master", "pipeline-int-2/branches/master", null, "pipeline-int-2/master"));
@@ -48,10 +49,10 @@ public class JobRunParserServiceTest {
         expectedList.put("BBMaven1New/jobs/leetcode3/branches/master", new JobNameDetails("leetcode3", "master", "BBMaven1New/jobs/leetcode3/branches/master", null, "BBMaven1New/leetcode3/master"));
 
         JobRunParserService service = new JobRunParserService();
-        for (String key : expectedList.keySet()){
+        for (String key : expectedList.keySet()) {
             JobNameDetails actual = service.parseJobRelativePath(key);
             JobNameDetails expected = expectedList.get(key);
-            Assert.assertEquals(actual.toString(), expected, actual);
+            assertEquals(expected, actual, actual.toString());
         }
     }
 
