@@ -263,7 +263,7 @@ public class PropeloPluginImpl extends Plugin {
         File expandedLevelOpsPluginDir = getExpandedLevelOpsPluginDir();
         File tmp = null;
         try {
-            tmp = File.createTempFile("propelo", "access_check", expandedLevelOpsPluginDir);
+            tmp = Files.createTempFile(expandedLevelOpsPluginDir.toPath(), "propelo", "access_check").toFile();
             return true;
         }
         catch (IOException e){
