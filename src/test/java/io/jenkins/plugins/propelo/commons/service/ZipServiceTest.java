@@ -1,11 +1,8 @@
 package io.jenkins.plugins.propelo.commons.service;
 
-import io.jenkins.plugins.propelo.commons.service.ZipService;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,34 +13,36 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-public class ZipServiceTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class ZipServiceTest {
 
     private Map<String, String> directoryDetails(File dir) throws IOException {
         Map<String, String> details = new HashMap<>();
         Queue<File> q = new LinkedList<>();
         q.offer(dir);
-        while (!q.isEmpty()){
+        while (!q.isEmpty()) {
             File c = q.poll();
             File[] children = c.listFiles();
-            if(children == null){
+            if (children == null) {
                 continue;
             }
-            for(File child : children){
-                if(child.isDirectory()){
+            for (File child : children) {
+                if (child.isDirectory()) {
                     q.offer(child);
                 }
-                if(child.isFile()){
-                    details.put(child.getAbsolutePath().substring(dir.getAbsolutePath().length()+1), DigestUtils.sha256Hex(Files.readAllBytes(child.toPath())));
+                if (child.isFile()) {
+                    details.put(child.getAbsolutePath().substring(dir.getAbsolutePath().length() + 1), DigestUtils.sha256Hex(Files.readAllBytes(child.toPath())));
                 }
             }
         }
         return details;
     }
 
-    private void compareDirectoryDetails(Map<String, String> e, Map<String, String> a){
-        Assert.assertEquals(e.size(), a.size());
-        for(String key : e.keySet()){
-            Assert.assertEquals(e.get(key), a.get(key));
+    private void compareDirectoryDetails(Map<String, String> e, Map<String, String> a) {
+        assertEquals(e.size(), a.size());
+        for (String key : e.keySet()) {
+            assertEquals(e.get(key), a.get(key));
         }
     }
 
@@ -54,7 +53,7 @@ public class ZipServiceTest {
     }
 
     @Test
-    public void testZipUnzip() throws IOException, URISyntaxException {
+    void testZipUnzip() throws IOException, URISyntaxException {
         File zipFile = null;
         File unZipDir = null;
         try {
@@ -66,10 +65,10 @@ public class ZipServiceTest {
             zipService.unZip(zipFile, unZipDir);
             compareDirectories(sourceDirectory, unZipDir);
         } finally {
-            if(zipFile != null){
+            if (zipFile != null) {
                 zipFile.delete();
             }
-            if(unZipDir!= null){
+            if (unZipDir != null) {
                 FileUtils.deleteDirectory(unZipDir);
             }
         }

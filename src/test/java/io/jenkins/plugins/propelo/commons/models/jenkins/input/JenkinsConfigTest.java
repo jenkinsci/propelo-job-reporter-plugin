@@ -2,16 +2,18 @@ package io.jenkins.plugins.propelo.commons.models.jenkins.input;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import io.jenkins.plugins.propelo.commons.models.jenkins.input.JenkinsConfig;
-
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
-public class JenkinsConfigTest {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class JenkinsConfigTest {
+
     @Test
-    public void testSerialization() throws JsonProcessingException {
+    void testSerialization() throws JsonProcessingException {
         JenkinsConfig.SecurityRealm sr = new JenkinsConfig.SecurityRealm();
         sr.setData("hudson.plugins.active_directory.ActiveDirectorySecurityRealm");
 
@@ -26,18 +28,19 @@ public class JenkinsConfigTest {
         enabledAgentProtocols.setString(Arrays.asList("JNLP-connect", "JNLP2-connect", "JNLP3-connect"));
 
         JenkinsConfig.EnabledDisabledAgentProtocols disabledAgentProtocols = new JenkinsConfig.EnabledDisabledAgentProtocols();
-        disabledAgentProtocols.setString(Arrays.asList("JNLP4-connect"));
+        disabledAgentProtocols.setString(List.of("JNLP4-connect"));
 
         config.setEnabledAgentProtocols(enabledAgentProtocols);
         config.setDisabledAgentProtocols(disabledAgentProtocols);
 
         XmlMapper xmlMapper = new XmlMapper();
         String serialized = xmlMapper.writeValueAsString(config);
-        Assert.assertNotNull(serialized);
+        assertNotNull(serialized);
     }
 
     @Test
-    public void testDeSerialization(){
+    @Disabled("Not implemented")
+    void testDeSerialization() {
 
     }
 }

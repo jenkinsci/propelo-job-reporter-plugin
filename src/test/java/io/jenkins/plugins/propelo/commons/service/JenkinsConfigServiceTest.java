@@ -1,290 +1,299 @@
 package io.jenkins.plugins.propelo.commons.service;
 
 import io.jenkins.plugins.propelo.commons.models.jenkins.output.JenkinsGeneralConfig;
-import io.jenkins.plugins.propelo.commons.service.JenkinsConfigService;
-
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 
-public class JenkinsConfigServiceTest {
-    Path slaveToMasterSecurityKillSwitchPath = new File(getClass().getClassLoader().getResource("configs/agent-to-master-access-control/slave-to-master-security-kill-switch-disabled").toURI()).toPath();
-    Path locationConfigurationPath = new File(getClass().getClassLoader().getResource("configs/location-configuration/jenkins.model.JenkinsLocationConfiguration-local.xml").toURI()).toPath();
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    public JenkinsConfigServiceTest() throws URISyntaxException {
+class JenkinsConfigServiceTest {
+
+    private Path slaveToMasterSecurityKillSwitchPath;
+    private Path locationConfigurationPath;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        slaveToMasterSecurityKillSwitchPath = new File(getClass().getClassLoader().getResource("configs/agent-to-master-access-control/slave-to-master-security-kill-switch-disabled").toURI()).toPath();
+        locationConfigurationPath = new File(getClass().getClassLoader().getResource("configs/location-configuration/jenkins.model.JenkinsLocationConfiguration-local.xml").toURI()).toPath();
     }
 
     @Test
-    public void testSecurityRealm1() throws URISyntaxException {
+    void testSecurityRealm1() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/security-realm/jenkins-config-1.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.ACTIVE_DIRECTORY);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.ROLE_BASED_STRATEGY);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.ACTIVE_DIRECTORY, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.ROLE_BASED_STRATEGY, config.getAuthorizationType());
     }
 
     @Test
-    public void testSecurityRealm2() throws URISyntaxException {
+    void testSecurityRealm2() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/security-realm/jenkins-config-2.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.DELEGATE_TO_SERVLET_CONTAINER);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.DELEGATE_TO_SERVLET_CONTAINER, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
     }
 
     @Test
-    public void testSecurityRealm3() throws URISyntaxException {
+    void testSecurityRealm3() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/security-realm/jenkins-config-3.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
     }
 
     @Test
-    public void testSecurityRealm4() throws URISyntaxException {
+    void testSecurityRealm4() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/security-realm/jenkins-config-4.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.LDAP);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.ROLE_BASED_STRATEGY);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.LDAP, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.ROLE_BASED_STRATEGY, config.getAuthorizationType());
     }
 
     @Test
-    public void testSecurityRealm5() throws URISyntaxException {
+    void testSecurityRealm5() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/security-realm/jenkins-config-5.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.UNIX_USER_GROUP_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.ROLE_BASED_STRATEGY);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.UNIX_USER_GROUP_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.ROLE_BASED_STRATEGY, config.getAuthorizationType());
     }
 
     @Test
-    public void testAuthorization1() throws URISyntaxException {
+    void testAuthorization1() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/authorization/jenkins-config-1.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.ANYONE_CAN_DO_ANYTHING);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.ANYONE_CAN_DO_ANYTHING, config.getAuthorizationType());
     }
 
     @Test
-    public void testAuthorization2() throws URISyntaxException {
+    void testAuthorization2() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/authorization/jenkins-config-2.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LEGACY_MODE);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LEGACY_MODE, config.getAuthorizationType());
     }
 
     @Test
-    public void testAuthorization3() throws URISyntaxException {
+    void testAuthorization3() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/authorization/jenkins-config-3.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
     }
 
     @Test
-    public void testAuthorization4() throws URISyntaxException {
+    void testAuthorization4() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/authorization/jenkins-config-4.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.MATRIX_BASED_SECURITY);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.MATRIX_BASED_SECURITY, config.getAuthorizationType());
     }
 
     @Test
-    public void testAuthorization5() throws URISyntaxException {
+    void testAuthorization5() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/authorization/jenkins-config-5.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.PROJECT_BASED_MATRIX_AUTHORIZATION_STRATEGY);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.PROJECT_BASED_MATRIX_AUTHORIZATION_STRATEGY, config.getAuthorizationType());
     }
 
     @Test
-    public void testAuthorization6() throws URISyntaxException {
+    void testAuthorization6() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/authorization/jenkins-config-6.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.UNIX_USER_GROUP_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.ROLE_BASED_STRATEGY);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.UNIX_USER_GROUP_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.ROLE_BASED_STRATEGY, config.getAuthorizationType());
     }
 
     @Test
-    public void testCSRFEnabled() throws URISyntaxException {
+    void testCSRFEnabled() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/csrf/jenkins-config-csrf-enabled.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), true);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), "hudson.security.csrf.DefaultCrumbIssuer");
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), true);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertTrue(config.getCsrf().isPreventCSRF());
+        assertEquals("hudson.security.csrf.DefaultCrumbIssuer", config.getCsrf().getCrumbIssuer());
+        assertEquals(true, config.getCsrf().getExcludeClientIPFromCrumb());
     }
 
     @Test
-    public void testCSRFDisabled() throws URISyntaxException {
+    void testCSRFDisabled() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/csrf/jenkins-config-csrf-disabled.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
     }
 
     @Test
-    public void testSlaveAgentPortFixed() throws URISyntaxException {
+    void testSlaveAgentPortFixed() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/slave-agent-ports/jenkins-config-slave-agent-port-fixed.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.FIXED);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), new Integer(50000));
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.FIXED, config.getSlaveAgentPort().getPortType());
+        assertEquals(50000, config.getSlaveAgentPort().getPortNumber());
     }
 
     @Test
-    public void testSlaveAgentPortRandom() throws URISyntaxException {
+    void testSlaveAgentPortRandom() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/slave-agent-ports/jenkins-config-slave-agent-port-random.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.RANDOM);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), null);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.RANDOM, config.getSlaveAgentPort().getPortType());
+        assertNull(config.getSlaveAgentPort().getPortNumber());
     }
 
     @Test
-    public void testSlaveAgentPortDisabled() throws URISyntaxException {
+    void testSlaveAgentPortDisabled() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/slave-agent-ports/jenkins-config-slave-agent-port-disabled.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.DISABLED);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), null);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.DISABLED, config.getSlaveAgentPort().getPortType());
+        assertNull(config.getSlaveAgentPort().getPortNumber());
     }
 
     @Test
-    public void testJNLPProtocolsInsecureDisabledSecureDisabled() throws URISyntaxException {
+    void testJNLPProtocolsInsecureDisabledSecureDisabled() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/jnlp/jenkins-config-jnlp-insecure-disabled-secure-disabled.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.FIXED);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), new Integer(50000));
-        Assert.assertNotNull(config.getJnlpProtocols());
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp1ProtocolEnabled(), false);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp2ProtocolEnabled(), false);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp3ProtocolEnabled(), false);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp4ProtocolEnabled(), false);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.FIXED, config.getSlaveAgentPort().getPortType());
+        assertEquals(50000, config.getSlaveAgentPort().getPortNumber());
+        assertNotNull(config.getJnlpProtocols());
+        assertFalse(config.getJnlpProtocols().isJnlp1ProtocolEnabled());
+        assertFalse(config.getJnlpProtocols().isJnlp2ProtocolEnabled());
+        assertFalse(config.getJnlpProtocols().isJnlp3ProtocolEnabled());
+        assertFalse(config.getJnlpProtocols().isJnlp4ProtocolEnabled());
     }
+
     @Test
-    public void testJNLPProtocolsInsecureDisabledSecureEnabled() throws URISyntaxException {
+    void testJNLPProtocolsInsecureDisabledSecureEnabled() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/jnlp/jenkins-config-jnlp-insecure-disabled-secure-enabled.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.FIXED);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), new Integer(50000));
-        Assert.assertNotNull(config.getJnlpProtocols());
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp1ProtocolEnabled(), false);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp2ProtocolEnabled(), false);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp3ProtocolEnabled(), false);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp4ProtocolEnabled(), true);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.FIXED, config.getSlaveAgentPort().getPortType());
+        assertEquals(50000, config.getSlaveAgentPort().getPortNumber());
+        assertNotNull(config.getJnlpProtocols());
+        assertFalse(config.getJnlpProtocols().isJnlp1ProtocolEnabled());
+        assertFalse(config.getJnlpProtocols().isJnlp2ProtocolEnabled());
+        assertFalse(config.getJnlpProtocols().isJnlp3ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp4ProtocolEnabled());
     }
 
     @Test
-    public void testJNLPProtocolsInsecureEnabledSecureDisabled() throws URISyntaxException {
+    void testJNLPProtocolsInsecureEnabledSecureDisabled() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/jnlp/jenkins-config-jnlp-insecure-enabled-secure-disabled.xml");
         File configFile = new File(url.toURI());
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.FIXED);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), new Integer(50000));
-        Assert.assertNotNull(config.getJnlpProtocols());
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp1ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp2ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp3ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp4ProtocolEnabled(), false);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.FIXED, config.getSlaveAgentPort().getPortType());
+        assertEquals(50000, config.getSlaveAgentPort().getPortNumber());
+        assertNotNull(config.getJnlpProtocols());
+        assertTrue(config.getJnlpProtocols().isJnlp1ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp2ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp3ProtocolEnabled());
+        assertFalse(config.getJnlpProtocols().isJnlp4ProtocolEnabled());
     }
 
     @Test
-    public void testJNLPProtocolsInsecureEnabledSecureEnabled() throws URISyntaxException {
+    void testJNLPProtocolsInsecureEnabledSecureEnabled() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/jnlp/jenkins-config-jnlp-insecure-enabled-secure-enabled.xml");
         File configFile = new File(url.toURI());
 
@@ -294,25 +303,25 @@ public class JenkinsConfigServiceTest {
 
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), killSwitchFile.toPath(), locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.FIXED);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), new Integer(50000));
-        Assert.assertNotNull(config.getJnlpProtocols());
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp1ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp2ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp3ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp4ProtocolEnabled(), true);
-        Assert.assertEquals(config.isAgentToMasterAccessControlEnabled(), false);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.FIXED, config.getSlaveAgentPort().getPortType());
+        assertEquals(50000, config.getSlaveAgentPort().getPortNumber());
+        assertNotNull(config.getJnlpProtocols());
+        assertTrue(config.getJnlpProtocols().isJnlp1ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp2ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp3ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp4ProtocolEnabled());
+        assertFalse(config.isAgentToMasterAccessControlEnabled());
     }
 
     @Test
-    public void testSlaveToMasterSecurityKillSwitchDisabled() throws URISyntaxException {
+    void testSlaveToMasterSecurityKillSwitchDisabled() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/jnlp/jenkins-config-jnlp-insecure-enabled-secure-enabled.xml");
         File configFile = new File(url.toURI());
 
@@ -321,25 +330,25 @@ public class JenkinsConfigServiceTest {
 
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), killSwitchFile.toPath(), locationConfigurationPath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.FIXED);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), new Integer(50000));
-        Assert.assertNotNull(config.getJnlpProtocols());
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp1ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp2ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp3ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp4ProtocolEnabled(), true);
-        Assert.assertEquals(config.isAgentToMasterAccessControlEnabled(), true);
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.FIXED, config.getSlaveAgentPort().getPortType());
+        assertEquals(50000, config.getSlaveAgentPort().getPortNumber());
+        assertNotNull(config.getJnlpProtocols());
+        assertTrue(config.getJnlpProtocols().isJnlp1ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp2ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp3ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp4ProtocolEnabled());
+        assertTrue(config.isAgentToMasterAccessControlEnabled());
     }
 
     @Test
-    public void testLocationConfigurationLocal() throws URISyntaxException {
+    void testLocationConfigurationLocal() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/jnlp/jenkins-config-jnlp-insecure-enabled-secure-disabled.xml");
         File configFile = new File(url.toURI());
 
@@ -347,27 +356,27 @@ public class JenkinsConfigServiceTest {
 
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigFilePath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.FIXED);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), new Integer(50000));
-        Assert.assertNotNull(config.getJnlpProtocols());
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp1ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp2ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp3ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp4ProtocolEnabled(), false);
-        Assert.assertNotNull(config.getLocatorConfig());
-        Assert.assertEquals(config.getLocatorConfig().getAdminEmailAddress(), null);
-        Assert.assertEquals(config.getLocatorConfig().getJenkinsUrl(), "http://localhost:8080/");
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.FIXED, config.getSlaveAgentPort().getPortType());
+        assertEquals(50000, config.getSlaveAgentPort().getPortNumber());
+        assertNotNull(config.getJnlpProtocols());
+        assertTrue(config.getJnlpProtocols().isJnlp1ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp2ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp3ProtocolEnabled());
+        assertFalse(config.getJnlpProtocols().isJnlp4ProtocolEnabled());
+        assertNotNull(config.getLocatorConfig());
+        assertNull(config.getLocatorConfig().getAdminEmailAddress());
+        assertEquals("http://localhost:8080/", config.getLocatorConfig().getJenkinsUrl());
     }
 
     @Test
-    public void testLocationConfigurationDev() throws URISyntaxException {
+    void testLocationConfigurationDev() throws URISyntaxException {
         URL url = this.getClass().getClassLoader().getResource("configs/jnlp/jenkins-config-jnlp-insecure-enabled-secure-disabled.xml");
         File configFile = new File(url.toURI());
 
@@ -375,23 +384,23 @@ public class JenkinsConfigServiceTest {
 
         JenkinsConfigService service = new JenkinsConfigService();
         JenkinsGeneralConfig config = service.readConfig(configFile.toPath(), slaveToMasterSecurityKillSwitchPath, locationConfigFilePath);
-        Assert.assertNotNull(config);
-        Assert.assertEquals(config.getSecurityRealm(), JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE);
-        Assert.assertEquals(config.getAuthorizationType(), JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING);
-        Assert.assertEquals(config.getCsrf().isPreventCSRF(), false);
-        Assert.assertEquals(config.getCsrf().getCrumbIssuer(), null);
-        Assert.assertEquals(config.getCsrf().getExcludeClientIPFromCrumb(), null);
-        Assert.assertNotNull(config.getSlaveAgentPort());
-        Assert.assertEquals(config.getSlaveAgentPort().getPortType(), JenkinsGeneralConfig.PORT_TYPE.FIXED);
-        Assert.assertEquals(config.getSlaveAgentPort().getPortNumber(), new Integer(50000));
-        Assert.assertNotNull(config.getJnlpProtocols());
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp1ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp2ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp3ProtocolEnabled(), true);
-        Assert.assertEquals(config.getJnlpProtocols().isJnlp4ProtocolEnabled(), false);
-        Assert.assertNotNull(config.getLocatorConfig());
-        Assert.assertEquals(config.getLocatorConfig().getAdminEmailAddress(), "viraj@levelops.io");
-        Assert.assertEquals(config.getLocatorConfig().getJenkinsUrl(), "https://jenkins.dev.levelops.io/");
+        assertNotNull(config);
+        assertEquals(JenkinsGeneralConfig.SECURITY_REALM.JENKINS_OWN_DATABASE, config.getSecurityRealm());
+        assertEquals(JenkinsGeneralConfig.AUTHORIZATION_TYPE.LOGGED_IN_USERS_CAN_DO_ANYTHING, config.getAuthorizationType());
+        assertFalse(config.getCsrf().isPreventCSRF());
+        assertNull(config.getCsrf().getCrumbIssuer());
+        assertNull(config.getCsrf().getExcludeClientIPFromCrumb());
+        assertNotNull(config.getSlaveAgentPort());
+        assertEquals(JenkinsGeneralConfig.PORT_TYPE.FIXED, config.getSlaveAgentPort().getPortType());
+        assertEquals(50000, config.getSlaveAgentPort().getPortNumber());
+        assertNotNull(config.getJnlpProtocols());
+        assertTrue(config.getJnlpProtocols().isJnlp1ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp2ProtocolEnabled());
+        assertTrue(config.getJnlpProtocols().isJnlp3ProtocolEnabled());
+        assertFalse(config.getJnlpProtocols().isJnlp4ProtocolEnabled());
+        assertNotNull(config.getLocatorConfig());
+        assertEquals("viraj@levelops.io", config.getLocatorConfig().getAdminEmailAddress());
+        assertEquals("https://jenkins.dev.levelops.io/", config.getLocatorConfig().getJenkinsUrl());
     }
 
 }

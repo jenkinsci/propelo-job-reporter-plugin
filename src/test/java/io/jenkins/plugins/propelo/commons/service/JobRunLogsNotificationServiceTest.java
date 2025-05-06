@@ -4,13 +4,9 @@ import io.jenkins.plugins.propelo.commons.models.JobRunCompleteData;
 import io.jenkins.plugins.propelo.commons.models.JobRunDetail;
 import io.jenkins.plugins.propelo.commons.models.JobRunParam;
 import io.jenkins.plugins.propelo.commons.models.blue_ocean.JobRun;
-import io.jenkins.plugins.propelo.commons.service.JobLogsService;
-import io.jenkins.plugins.propelo.commons.service.JobRunCompleteNotificationService;
 import io.jenkins.plugins.propelo.commons.utils.JsonUtils;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,18 +19,19 @@ import java.util.UUID;
 
 import static io.jenkins.plugins.propelo.commons.plugins.Common.API_URL_LOCAL;
 import static io.jenkins.plugins.propelo.commons.utils.JobUtils.writeLogData;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JobRunLogsNotificationServiceTest {
+class JobRunLogsNotificationServiceTest {
     private static final String EXPECTED_STRING = "This is the temporary log content";
-    private static final String separator = System.getProperty("line.separator");
+    private static final String separator = System.lineSeparator();
 
     @Test
-    public void testWriteLogData() throws IOException {
+    void testWriteLogData() throws IOException {
         File currentJobRunCompleteDataDirectory = null;
         try {
             currentJobRunCompleteDataDirectory = Files.createTempDirectory("path").toFile();
             UUID uuidOfFileCreated = writeLogData(currentJobRunCompleteDataDirectory, "Temp data");
-            Assert.assertNotNull(uuidOfFileCreated);
+            assertNotNull(uuidOfFileCreated);
         } finally {
             if ((currentJobRunCompleteDataDirectory != null) && (currentJobRunCompleteDataDirectory.exists())) {
                 currentJobRunCompleteDataDirectory.delete();
@@ -42,9 +39,9 @@ public class JobRunLogsNotificationServiceTest {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void testSubmit() throws IOException {
+    void testSubmit() throws IOException {
         List<String> productIds = new ArrayList<>();
         productIds.add("71");
         List<String> scmCommitIds = new ArrayList<>();
@@ -67,14 +64,13 @@ public class JobRunLogsNotificationServiceTest {
             List<String> runIds = jobRunCompleteNotificationService.submitJobRunCompleteRequest(apiKey, jobRunDetail,
                     "https://github.com/testadmin1-levelops/openapi-generator.git", null, UUID.randomUUID().toString(),
                     "Jenkins US1", "https://jenkins.dev.levelops.io/", false, jobRunCompleteData, scmCommitIds, null, null);
-            Assert.assertNotNull(runIds);
+            assertNotNull(runIds);
         } finally {
-            if((completeDataZipFile != null) && (completeDataZipFile.exists())) {
+            if ((completeDataZipFile != null) && (completeDataZipFile.exists())) {
                 completeDataZipFile.delete();
             }
         }
     }
-
 
     private File writeIntoFile() throws IOException {
         File tempFile = File.createTempFile("log", null);

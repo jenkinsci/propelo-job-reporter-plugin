@@ -4,12 +4,9 @@ import io.jenkins.plugins.propelo.commons.models.JobRunCompleteData;
 import io.jenkins.plugins.propelo.commons.models.JobRunDetail;
 import io.jenkins.plugins.propelo.commons.models.JobRunParam;
 import io.jenkins.plugins.propelo.commons.models.blue_ocean.JobRun;
-import io.jenkins.plugins.propelo.commons.service.JobRunCompleteNotificationService;
 import io.jenkins.plugins.propelo.commons.utils.JsonUtils;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +15,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static io.jenkins.plugins.propelo.commons.plugins.Common.API_URL_LOCAL;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JobRunCompleteNotificationServiceIntegrationTest {
-    @Ignore
+class JobRunCompleteNotificationServiceIntegrationTest {
+
+    @Disabled
     @Test
-    public void testSubmit() throws IOException {
+    void testSubmit() throws IOException {
         List<String> productIds = new ArrayList<>();
         productIds.add("71");
         List<String> scmCommitIds = new ArrayList<>();
@@ -42,9 +41,9 @@ public class JobRunCompleteNotificationServiceIntegrationTest {
             List<String> runIds = jobRunCompleteNotificationService.submitJobRunCompleteRequest(apiKey, jobRunDetail,
                     "https://github.com/testadmin1-levelops/openapi-generator.git", null, UUID.randomUUID().toString(),
                     "Jenkins US1", "https://jenkins.dev.levelops.io/", false, jobRunCompleteData, scmCommitIds, null, null);
-            Assert.assertNotNull(runIds);
+            assertNotNull(runIds);
         } finally {
-            if((completeDataZipFile != null) && (completeDataZipFile.exists())) {
+            if ((completeDataZipFile != null) && (completeDataZipFile.exists())) {
                 completeDataZipFile.delete();
             }
         }

@@ -1,44 +1,45 @@
 package io.jenkins.plugins.propelo.commons.service;
 
-import io.jenkins.plugins.propelo.commons.service.JenkinsInstanceNameService;
-
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class JenkinsInstanceNameServiceTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+class JenkinsInstanceNameServiceTest {
+
     @Test
-    public void testCreateOrReturnInstanceName() throws IOException {
+    void testCreateOrReturnInstanceName() throws IOException {
         File tempDir = null;
         try {
             tempDir = Files.createTempDirectory("testCreateOrReturnInstanceName").toFile();
             JenkinsInstanceNameService service = new JenkinsInstanceNameService(tempDir);
-            for(int i=0; i < 10; i++){
+            for (int i = 0; i < 10; i++) {
                 String e = "Jenkisns US" + i;
                 String a = service.createOrUpdateInstanceName(e);
-                Assert.assertEquals(e, a);
+                assertEquals(e, a);
             }
         } finally {
-            if (tempDir != null){
+            if (tempDir != null) {
                 FileUtils.deleteDirectory(tempDir);
             }
         }
     }
 
     @Test
-    public void testCreateOrReturnInstanceNameNullOrEmpty() throws IOException {
+    void testCreateOrReturnInstanceNameNullOrEmpty() throws IOException {
         File tempDir = null;
         try {
             tempDir = Files.createTempDirectory("testCreateOrReturnInstanceNameNullOrEmpty").toFile();
             JenkinsInstanceNameService service = new JenkinsInstanceNameService(tempDir);
-            Assert.assertEquals(null, service.createOrUpdateInstanceName(null));
-            Assert.assertEquals("", service.createOrUpdateInstanceName(""));
+            assertNull(service.createOrUpdateInstanceName(null));
+            assertEquals("", service.createOrUpdateInstanceName(""));
         } finally {
-            if (tempDir != null){
+            if (tempDir != null) {
                 FileUtils.deleteDirectory(tempDir);
             }
         }
