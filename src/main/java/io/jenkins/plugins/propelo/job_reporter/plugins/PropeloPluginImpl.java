@@ -134,7 +134,7 @@ public class PropeloPluginImpl extends Plugin {
             if (StringUtils.isNotBlank(oldValues.getJenkinsUserToken())) {
                 CONFIGURATION.setJenkinsUserToken(Secret.fromString(oldValues.getJenkinsUserToken()));
             }
-            CONFIGURATION.setApplicationType(ApplicationType.SEI_LEGACY);
+            CONFIGURATION.setApplicationType(ApplicationType.SEI_HARNESS_PROD1);
             // persist the migrated values
             CONFIGURATION.save();
             // set migrated to true on the old configuration

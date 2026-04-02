@@ -3,6 +3,7 @@ package io.jenkins.plugins.propelo.job_reporter.extensions;
 import hudson.Extension;
 import hudson.model.Hudson;
 import hudson.model.ManagementLink;
+import hudson.util.FormValidation;
 import hudson.util.Secret;
 import io.jenkins.plugins.propelo.commons.models.ApplicationType;
 import io.jenkins.plugins.propelo.job_reporter.plugins.PropeloPluginImpl;
@@ -91,5 +92,19 @@ public class LevelOpsMgmtLink extends ManagementLink {
 
     public String getJenkinsStatus() {
         return getConfiguration().getJenkinsStatus();
+    }
+
+    public FormValidation doCheckJenkinsInstanceName(@QueryParameter("value") final String jenkinsInstanceName) {
+        return PropeloPluginImpl.getInstance().doCheckJenkinsInstanceName(null, null, jenkinsInstanceName);
+    }
+
+    @POST
+    public FormValidation doCheckLevelOpsApiKey(@QueryParameter("value") final Secret levelOpsApiKey) {
+        return PropeloPluginImpl.getInstance().doCheckLevelOpsApiKey(null, null, levelOpsApiKey);
+    }
+
+    @POST
+    public FormValidation doCheckLevelOpsPluginPath(@QueryParameter("value") final String path) {
+        return PropeloPluginImpl.getInstance().doCheckLevelOpsPluginPath(null, null, path);
     }
 }
