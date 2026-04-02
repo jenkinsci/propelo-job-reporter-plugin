@@ -26,16 +26,21 @@ public class LevelOpsPluginConfigServiceTest {
         applicationType = PropeloPluginImpl.getInstance().getApplicationType();
         Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_PROD3);
 
-        CONFIGURATION.setApplicationType(ApplicationType.fromString("SEI-Legacy"));
-        applicationType = PropeloPluginImpl.getInstance().getApplicationType();
-        Assert.assertEquals(applicationType, ApplicationType.SEI_LEGACY);
-
-        CONFIGURATION.setApplicationType(ApplicationType.fromString("SEI-Legacy-EU"));
-        applicationType = PropeloPluginImpl.getInstance().getApplicationType();
-        Assert.assertEquals(applicationType, ApplicationType.SEI_LEGACY_EU);
-
         CONFIGURATION.setApplicationType(ApplicationType.fromString("SEI-Harness-PROD2"));
         applicationType = PropeloPluginImpl.getInstance().getApplicationType();
         Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_PROD2);
+
+        CONFIGURATION.setApplicationType(ApplicationType.fromString("SEI-HARNESS-PROD4"));
+        applicationType = PropeloPluginImpl.getInstance().getApplicationType();
+        Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_PROD4);
+
+        CONFIGURATION.setApplicationType(ApplicationType.fromString("SEI-HARNESS-EU1"));
+        applicationType = PropeloPluginImpl.getInstance().getApplicationType();
+        Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_EU1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testUnknownApplicationTypeThrows() {
+        ApplicationType.fromString("SEI-Legacy-US");
     }
 }
