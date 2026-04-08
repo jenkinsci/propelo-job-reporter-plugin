@@ -1,0 +1,42 @@
+.github/workflows/cd.yaml
+  e1d645b8ee450b7c 12
+---
+{
+  "attestations": [
+    {
+      "entries": [
+        {
+          "accepted_lines": 1,
+          "added_lines": 1,
+          "deleted_lines": 3,
+          "hash": "e1d645b8ee450b7c",
+          "lines": "12",
+          "overridden_lines": 0
+        }
+      ],
+      "file": ".github/workflows/cd.yaml"
+    }
+  ],
+  "base_commit_sha": "fb094e62c41d52bcfe205061c5c8f06a370fbd55",
+  "branch": "SEI/feature/SEI-16638",
+  "commit_sha": "a65f6acdf15b1cdf3d6de5fe1ddad151fbc966f2",
+  "commit_time": "2026-04-08T12:14:18+05:30",
+  "git_ai_version": "1.2.6",
+  "prompts": {
+    "e1d645b8ee450b7c": {
+      "accepted_lines": 1,
+      "agent_id": {
+        "id": "d25442be-4bf2-48d5-8e0e-a6f854bf2c81",
+        "model": "claude-opus-4-6",
+        "tool": "claude"
+      },
+      "human_author": "ashish-levelops <ashish.duthade@harness.io>",
+      "messages": [],
+      "overriden_lines": 0,
+      "total_additions": 1,
+      "total_deletions": 3
+    }
+  },
+  "repo": "https://github.com/jenkinsci/propelo-job-reporter-plugin",
+  "schema_version": "authorship/3.0.0"
+}
