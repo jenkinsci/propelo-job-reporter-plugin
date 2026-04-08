@@ -1,5 +1,5 @@
 .github/workflows/cd.yaml
-  e1d645b8ee450b7c 12
+  human 12
 ---
 {
   "attestations": [
@@ -8,8 +8,8 @@
         {
           "accepted_lines": 1,
           "added_lines": 1,
-          "deleted_lines": 3,
-          "hash": "e1d645b8ee450b7c",
+          "deleted_lines": 0,
+          "hash": "human",
           "lines": "12",
           "overridden_lines": 0
         }
@@ -23,18 +23,14 @@
   "commit_time": "2026-04-08T12:14:18+05:30",
   "git_ai_version": "1.2.6",
   "prompts": {
-    "e1d645b8ee450b7c": {
+    "human": {
       "accepted_lines": 1,
-      "agent_id": {
-        "id": "d25442be-4bf2-48d5-8e0e-a6f854bf2c81",
-        "model": "claude-opus-4-6",
-        "tool": "claude"
-      },
+      "agent_id": null,
       "human_author": "ashish-levelops <ashish.duthade@harness.io>",
       "messages": [],
       "overriden_lines": 0,
       "total_additions": 1,
-      "total_deletions": 3
+      "total_deletions": 0
     }
   },
   "repo": "https://github.com/jenkinsci/propelo-job-reporter-plugin",
