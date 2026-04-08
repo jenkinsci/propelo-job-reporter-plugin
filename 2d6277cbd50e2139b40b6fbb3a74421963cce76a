@@ -1,0 +1,38 @@
+pom.xml
+  human 85
+---
+{
+  "attestations": [
+    {
+      "entries": [
+        {
+          "accepted_lines": 1,
+          "added_lines": 1,
+          "deleted_lines": 0,
+          "hash": "human",
+          "lines": "85",
+          "overridden_lines": 0
+        }
+      ],
+      "file": "pom.xml"
+    }
+  ],
+  "base_commit_sha": "7cf3504d8bcb155776148e1b4a17535559212b02",
+  "branch": "origin/feature/SEI-16638",
+  "commit_sha": "2d6277cbd50e2139b40b6fbb3a74421963cce76a",
+  "commit_time": "2026-04-08T09:44:24+05:30",
+  "git_ai_version": "1.2.6",
+  "prompts": {
+    "human": {
+      "accepted_lines": 1,
+      "agent_id": null,
+      "human_author": "ashish-levelops <ashish.duthade@harness.io>",
+      "messages": [],
+      "overriden_lines": 0,
+      "total_additions": 1,
+      "total_deletions": 0
+    }
+  },
+  "repo": "https://github.com/jenkinsci/propelo-job-reporter-plugin",
+  "schema_version": "authorship/3.0.0"
+}
