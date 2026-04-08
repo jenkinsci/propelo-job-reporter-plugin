@@ -1,0 +1,38 @@
+README.md
+  human 161
+---
+{
+  "attestations": [
+    {
+      "entries": [
+        {
+          "accepted_lines": 1,
+          "added_lines": 1,
+          "deleted_lines": 0,
+          "hash": "human",
+          "lines": "161",
+          "overridden_lines": 0
+        }
+      ],
+      "file": "README.md"
+    }
+  ],
+  "base_commit_sha": "a552a17faaff2c58a86e4861d5991d98900c9604",
+  "branch": "SEI/feature/SEI-16638",
+  "commit_sha": "b3a29bf824c01d5c2027d22aad72ae53ab824e9c",
+  "commit_time": "2026-04-08T12:25:31+05:30",
+  "git_ai_version": "1.2.6",
+  "prompts": {
+    "human": {
+      "accepted_lines": 1,
+      "agent_id": null,
+      "human_author": "ashish-levelops <ashish.duthade@harness.io>",
+      "messages": [],
+      "overriden_lines": 0,
+      "total_additions": 1,
+      "total_deletions": 0
+    }
+  },
+  "repo": "https://github.com/jenkinsci/propelo-job-reporter-plugin",
+  "schema_version": "authorship/3.0.0"
+}
