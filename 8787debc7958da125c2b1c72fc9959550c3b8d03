@@ -1,0 +1,12 @@
+---
+{
+  "attestations": [],
+  "base_commit_sha": "c3977bf251a7a991d5490e524b3081685d810e4f",
+  "branch": "SEI/feature/SEI-16638",
+  "commit_sha": "8787debc7958da125c2b1c72fc9959550c3b8d03",
+  "commit_time": "2026-04-08T10:12:20+05:30",
+  "git_ai_version": "1.2.6",
+  "prompts": {},
+  "repo": "https://github.com/jenkinsci/propelo-job-reporter-plugin",
+  "schema_version": "authorship/3.0.0"
+}
