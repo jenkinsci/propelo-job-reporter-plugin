@@ -86,7 +86,6 @@ Propelo's Jenkins Plugin to send reports about jobs' logs and metadata to the Pr
   >
   >       JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 mvn install
 
-
 <br />
 
 - Gradle
