@@ -35,10 +35,12 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -178,6 +180,7 @@ public class LevelOpsRunListener extends RunListener<Run> {
             //performJobRunCompleteNotification fn logs have this.
             //LOGGER.log(Level.INFO, "Completed processing complete event jobFullName={0}, build number = {1}", new Object[]{jobRunDetail.getJobFullName(), jobRunDetail.getBuildNumber()});
         } catch (Exception e) {
+            // TODO: Delete data files after having retried a few configurable number of times
             LOGGER.log(Level.SEVERE, "Error in RunListener onCompleted!", e);
             reportError(ExceptionUtils.getFullStackTrace(e));
             if (e instanceof InterruptedException) {
@@ -186,15 +189,34 @@ public class LevelOpsRunListener extends RunListener<Run> {
         }
     }
 
+    /**
+     * Deletes data transmitted to propelo
+     */
     private void deleteJobRunDataCompleteDirectoryContents() {
+        LOGGER.log(Level.FINEST, "Delete Job Run Complete Data Directory (date-$date) starting");
         File dataDirectoryWithVersion = plugin.getDataDirectoryWithVersion();
-        if (dataDirectoryWithVersion != null && dataDirectoryWithVersion.exists()) {
-            LOGGER.log(Level.FINEST, "Delete Job Run Complete Data Directory (date-$date) starting");
-            for (File file : Objects.requireNonNull(dataDirectoryWithVersion.listFiles())) {
-                if (!file.getName().equalsIgnoreCase(DateUtils.getDateFormattedDirName())) {
-                    FileUtils.deleteQuietly(file);
-                }
-            }
+        if (dataDirectoryWithVersion == null || !dataDirectoryWithVersion.exists()) {
+            LOGGER.log(Level.FINE, "Skipping job run complete data directory delete... data directory = {0}", dataDirectoryWithVersion);
+            return;
+        }
+        String todayDirName = DateUtils.getDateFormattedDirName();
+
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(
+                dataDirectoryWithVersion.toPath(),
+                (entry) -> {
+                    boolean use = !entry.getFileName().toString().equalsIgnoreCase(todayDirName);
+                    LOGGER.log(Level.FINER, "Filtering files... accept {0}? {1}", new Object[]{todayDirName, use});
+                    return use;
+                })) {
+            ds.forEach(item -> {
+                LOGGER.log(Level.FINE, "Deleting old historic report: {0}", item.toString());
+                FileUtils.deleteQuietly(item.toFile());
+            });
+
+        } catch (SecurityException | IOException e) {
+            LOGGER.log(Level.SEVERE, e, () -> {
+                return String.format("Unable to delete all files from the historic reports in the directory '%s' other than %s", dataDirectoryWithVersion.toPath(), todayDirName);
+            });
         }
     }
 
@@ -226,7 +248,7 @@ public class LevelOpsRunListener extends RunListener<Run> {
         GenericRequestService genericRequestService = new GenericRequestService(plugin.getEffectiveLevelOpsApiUrl(), mapper);
         try {
             genericRequestService.performGenericRequest(plugin.getLevelOpsApiKey().getPlainText(), "pluginErrorReport", payload, plugin.isTrustAllCertificates(), null, ProxyConfigService.generateConfigFromJenkinsProxyConfiguration(Jenkins.getInstanceOrNull()));
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Unabled to report errors back to Propelo....", e);
         }
     }

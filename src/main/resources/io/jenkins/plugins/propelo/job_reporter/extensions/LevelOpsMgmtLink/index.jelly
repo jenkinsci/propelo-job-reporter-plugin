@@ -18,7 +18,7 @@
                     <f:entry name="applicationType" description="Select the application type" title="Choose Application Type" field="applicationType">
                         <select name="applicationType">
                             <j:choose>
-                                <j:when test="${it.configuration.applicationType == 'SEI-Harness-PROD0'}">
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD0'}">
                                     <option value="SEI-Harness-PROD0" selected="">SEI-Harness-PROD0</option>
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
@@ -26,7 +26,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                 </j:when>
-                                <j:when test="${it.configuration.applicationType == 'SEI-Harness-PROD1'}">
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD1'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
                                     <option value="SEI-Harness-PROD1" selected="">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
@@ -34,7 +34,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                 </j:when>
-                                <j:when test="${it.configuration.applicationType == 'SEI-Harness-PROD2'}">
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD2'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2" selected="">SEI-Harness-PROD2</option>
@@ -42,7 +42,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                 </j:when>
-                                <j:when test="${it.configuration.applicationType == 'SEI-Harness-PROD3'}">
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD3'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
@@ -50,7 +50,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                 </j:when>
-                                <j:when test="${it.configuration.applicationType == 'SEI-Harness-PROD4'}">
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD4'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
@@ -58,7 +58,7 @@
                                     <option value="SEI-Harness-PROD4" selected="">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
                                 </j:when>
-                                <j:when test="${it.configuration.applicationType == 'SEI-Harness-EU1'}">
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_EU1'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
                                     <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
                                     <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>

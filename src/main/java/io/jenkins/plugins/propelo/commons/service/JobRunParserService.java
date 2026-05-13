@@ -318,7 +318,7 @@ public class JobRunParserService {
                 triggerId = "SCMTrigger";
                 break;
             default:
-                LOGGER.severe("Using unknown trigger id for unsupported trigger type: " + triggerType);
+                LOGGER.warning("Using unknown trigger id for unsupported trigger type: " + triggerType);
                 triggerId = "unknown";
         }
         return new JobTrigger(triggerId, triggerType);

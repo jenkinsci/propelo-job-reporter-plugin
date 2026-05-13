@@ -57,22 +57,40 @@ public class ZipService {
         }
     }
 
+    /*
+    Unzip is not used in the plugin. Fixing this proactively.
+     */
     public void unZip(File sourceZipFile, File unzipDestinationDir) throws IOException {
         byte[] buffer = new byte[1024];
-        ZipInputStream zis = new ZipInputStream(new FileInputStream(sourceZipFile));
-        ZipEntry zipEntry = zis.getNextEntry();
-        while (zipEntry != null) {
-            File newFile = newFile(unzipDestinationDir, zipEntry);
-            try (FileOutputStream fos = new FileOutputStream(newFile)){
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len);
-                }
-            }
-            zipEntry = zis.getNextEntry();
+
+        /*
+        https://stackoverflow.com/questions/884007/correct-way-to-close-nested-streams-and-writers-in-java
+        Good:
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+          // do something with ois
         }
-        zis.closeEntry();
-        zis.close();
+        Better:
+        try (FileInputStream fis = new FileInputStream(f); ObjectInputStream ois = new ObjectInputStream(fis)) {
+          // do something with ois
+        }
+        Reason: The try-with-resources is not aware of the inner FileInputStream, so if the ObjectInputStream constructor throws an exception,
+        the FileInputStream is never closed (until the garbage collector gets to it).
+         */
+        try (FileInputStream fis = new FileInputStream(sourceZipFile);
+             ZipInputStream zis = new ZipInputStream(fis) ) {
+            ZipEntry zipEntry = zis.getNextEntry();
+            while (zipEntry != null) {
+                File newFile = newFile(unzipDestinationDir, zipEntry);
+                try (FileOutputStream fos = new FileOutputStream(newFile)){
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                }
+                zipEntry = zis.getNextEntry();
+            }
+            zis.closeEntry();
+        }
     }
 
     public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {

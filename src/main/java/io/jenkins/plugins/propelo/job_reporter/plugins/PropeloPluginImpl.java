@@ -1,6 +1,7 @@
 package io.jenkins.plugins.propelo.job_reporter.plugins;
 
 import antlr.ANTLRException;
+import hudson.Extension;
 import hudson.Plugin;
 import hudson.scheduler.CronTab;
 import hudson.util.FormValidation;
@@ -11,10 +12,10 @@ import io.jenkins.plugins.propelo.commons.models.blue_ocean.Organization;
 import io.jenkins.plugins.propelo.commons.service.BlueOceanRestClient;
 import io.jenkins.plugins.propelo.commons.service.JenkinsInstanceGuidService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsStatusService;
+import io.jenkins.plugins.propelo.commons.service.JenkinsStatusService.LoadFileException;
 import io.jenkins.plugins.propelo.commons.service.LevelOpsPluginConfigService;
 import io.jenkins.plugins.propelo.commons.service.LevelOpsPluginConfigValidator;
 import io.jenkins.plugins.propelo.commons.service.ProxyConfigService;
-import io.jenkins.plugins.propelo.commons.service.JenkinsStatusService.LoadFileException;
 import io.jenkins.plugins.propelo.commons.utils.DateUtils;
 import io.jenkins.plugins.propelo.commons.utils.EnvironmentVariableNotDefinedException;
 import io.jenkins.plugins.propelo.commons.utils.JsonUtils;
@@ -36,21 +37,26 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.UnknownHostException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static io.jenkins.plugins.propelo.commons.plugins.Common.REPORTS_DIR_NAME;
+import static io.jenkins.plugins.propelo.job_reporter.extensions.PropeloJobReporterConfiguration.CONFIGURATION;
 
+@Extension
 public class PropeloPluginImpl extends Plugin {
     private static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
     private static final String DATA_DIR_NAME = "run-complete-data";
     public static final String PLUGIN_SHORT_NAME = "propelo-job-reporter";
+    private static PropeloPluginImpl instance = null;
+    private static final Pattern OLDER_DIRECTORIES_PATTERN = Pattern.compile("^(run-complete-data-)");
     private Secret levelOpsApiKey = Secret.fromString("");
     private String levelOpsPluginPath = "${JENKINS_HOME}/levelops-jenkin";
     private boolean trustAllCertificates = false;
@@ -63,16 +69,20 @@ public class PropeloPluginImpl extends Plugin {
     private Secret jenkinsUserToken = Secret.fromString("");
     private long heartbeatDuration = 60;
     private String bullseyeXmlResultPaths = "";
-    /** Value from the settings form, e.g. {@code SEI-Harness-PROD0}; blank keeps legacy {@link LevelOpsPluginConfigService} URL. */
-    private String applicationType = "";
     private long configUpdatedAt = System.currentTimeMillis();
-    private static PropeloPluginImpl instance = null;
-    private static final Pattern OLDER_DIRECTORIES_PATTERN = Pattern.compile("^(run-complete-data-)");
-    
+    private ApplicationType applicationType;
+    private Boolean migrated;
 
     //ToDo: This is deprecated! Fix soon.
     public PropeloPluginImpl() {
         instance = this;
+    }
+
+    public Boolean getMigrated(){
+        return migrated;
+    }
+    public void setMigrated(Boolean migrated){
+        this.migrated = migrated;
     }
 
     @Override
@@ -80,10 +90,15 @@ public class PropeloPluginImpl extends Plugin {
         super.start();
         load();
         // if there is an instance aleady present, ignore migration
-        if (StringUtils.isBlank(this.jenkinsBaseUrl)) { // jenkinsBaseUrl is always added during the save process. we can use this value as a check.
+        if (StringUtils.isBlank(getJenkinsBaseUrl()) && StringUtils.isBlank(jenkinsBaseUrl)) { // jenkinsBaseUrl is always added during the save process. we can use this value as a check.
             LOGGER.info("No stored configuration detected");
             migrateOldPluginConfig();
         }
+        if(migrated == null || !migrated){
+            migratePluginConfigToConfiguration();
+        }
+        LOGGER.info("Checking work directory permissions...");
+        checkWorkDirectoryAccess();
         LOGGER.info("Deleting Older directories during plugin initialization.Started");
         deleteOlderDirectories();
         LOGGER.info("Deleting Older directories during plugin initialization.Completed");
@@ -103,33 +118,62 @@ public class PropeloPluginImpl extends Plugin {
         // if there is a serialized version of the old "io.levelops.plugins.levelops_job_reporter.plugins.LevelOpsPluginImpl" instance and 
         // it hasn't been marked as migrated, then take the values from that config and migrate them to a new instance of PropeloPluginImpl
         if (StringUtils.isNotBlank(oldValues.getLevelOpsApiKey()) && !oldValues.isMigrated()) {
-            LOGGER.info("Migrating old LevelOpsPluginImpl configuration...");
+            LOGGER.info("Migrating old LevelOpsPluginImpl Configuration...");
             // fill in a new instance
             // PropeloPluginImpl newInstance = new PropeloPluginImpl();
-            instance.setBullseyeXmlResultPath(oldValues.getBullseyeXmlResultPaths());
-            instance.setLevelOpsPluginPath(oldValues.getLevelOpsPluginPath());
+            CONFIGURATION.setBullseyeXmlResultPaths(oldValues.getBullseyeXmlResultPaths());
+            CONFIGURATION.setLevelOpsPluginPath(oldValues.getLevelOpsPluginPath());
             if(StringUtils.isNotBlank(oldValues.getLevelOpsApiKey())) {
-                instance.setLevelOpsApiKey(Secret.fromString(oldValues.getLevelOpsApiKey()));
+                CONFIGURATION.setLevelOpsApiKey(Secret.fromString(oldValues.getLevelOpsApiKey()));
             }
-            instance.setTrustAllCertificates(oldValues.isTrustAllCertificates());
-            instance.setProductIds(oldValues.getProductIds());
-            instance.setJenkinsInstanceName(oldValues.getJenkinsInstanceName());
-            instance.setJenkinsBaseUrl(oldValues.getJenkinsBaseUrl());
-            instance.setJenkinsStatus(oldValues.getJenkinsStatus());
-            instance.setJenkinsUserName(oldValues.getJenkinsUserName());
+            CONFIGURATION.setTrustAllCertificates(oldValues.isTrustAllCertificates());
+            CONFIGURATION.setProductIds(oldValues.getProductIds());
+            CONFIGURATION.setJenkinsInstanceName(oldValues.getJenkinsInstanceName());
+            CONFIGURATION.setJenkinsBaseUrl(oldValues.getJenkinsBaseUrl());
+            CONFIGURATION.setJenkinsStatus(oldValues.getJenkinsStatus());
+            CONFIGURATION.setJenkinsUserName(oldValues.getJenkinsUserName());
             if (StringUtils.isNotBlank(oldValues.getJenkinsUserToken())) {
-                instance.setJenkinsUserToken(Secret.fromString(oldValues.getJenkinsUserToken()));
+                CONFIGURATION.setJenkinsUserToken(Secret.fromString(oldValues.getJenkinsUserToken()));
             }
+            CONFIGURATION.setApplicationType(ApplicationType.SEI_HARNESS_PROD1);
             // persist the migrated values
-            instance.save();
+            CONFIGURATION.save();
             // set migrated to true on the old configuration
             oldValues.setMigrated(true);
             oldValues.save();
+            instance.setMigrated(true);
+            instance.save();
             LOGGER.info("Old LevelOpsPluginImpl Configuration migrated!");
         }
         else {
             LOGGER.info("Not migrating old settings from LevelOpsPluginImpl to PropeloPluginImpl");
         }
+    }
+
+    private void migratePluginConfigToConfiguration() throws Exception{
+        // Try Load old plugin values
+        // if there is a serialized version of the old "io.levelops.plugins.levelops_job_reporter.plugins.PropeloPluginImpl" instance and
+        // it hasn't been marked as migrated, then take the values from that config and migrate them to a new configuration of PropeloPluginImpl
+
+        LOGGER.info("Migrating old PropeloPluginImpl Configuration...");
+        // fill in a new instance
+        CONFIGURATION.setBullseyeXmlResultPaths(instance.bullseyeXmlResultPaths);
+        CONFIGURATION.setLevelOpsPluginPath(instance.levelOpsPluginPath);
+        CONFIGURATION.setLevelOpsApiKey(Secret.fromString(instance.levelOpsApiKey.getPlainText()));
+        CONFIGURATION.setTrustAllCertificates(instance.trustAllCertificates);
+        CONFIGURATION.setProductIds(instance.productIds);
+        CONFIGURATION.setJenkinsInstanceName(instance.jenkinsInstanceName);
+        CONFIGURATION.setJenkinsBaseUrl(instance.jenkinsBaseUrl);
+        CONFIGURATION.setJenkinsStatus(instance.jenkinsStatus);
+        CONFIGURATION.setJenkinsUserName(instance.jenkinsUserName);
+        CONFIGURATION.setJenkinsUserToken(Secret.fromString(instance.jenkinsUserToken.getPlainText()));
+        CONFIGURATION.setApplicationType(instance.applicationType);
+        // persist the migrated values
+        CONFIGURATION.save();
+        // set migrated to true on the old configuration
+        instance.setMigrated(true);
+        instance.save();
+        LOGGER.info("Old PropeloPluginImpl Configuration migrated!");
     }
 
     public static PropeloPluginImpl getInstance() {
@@ -144,20 +188,16 @@ public class PropeloPluginImpl extends Plugin {
         return (jenkins == null) ? null : jenkins.getRootDir();
     }
 
-    public void setJenkinsBaseUrl(final String jenkinsBaseUrl){
-        this.jenkinsBaseUrl = jenkinsBaseUrl;
-    }
-
     public String getJenkinsBaseUrl(){
-        return this.jenkinsBaseUrl;
+        return CONFIGURATION.getJenkinsBaseUrl();
     }
 
     public Secret getLevelOpsApiKey() {
-        return levelOpsApiKey;
+        return CONFIGURATION.getLevelOpsApiKey();
     }
 
-    public void setLevelOpsApiKey(Secret levelOpsApiKey) {
-        this.levelOpsApiKey = levelOpsApiKey;
+    public ApplicationType getApplicationType() {
+        return CONFIGURATION.getApplicationType();
     }
 
     /**
@@ -168,62 +208,45 @@ public class PropeloPluginImpl extends Plugin {
      * @return the path as entered by the user.
      */
     public String getLevelOpsPluginPath() {
-        return levelOpsPluginPath;
-    }
-
-    public void setLevelOpsPluginPath(String levelOpsPluginPath) {
-        this.levelOpsPluginPath = levelOpsPluginPath;
+        return CONFIGURATION.getLevelOpsPluginPath();
     }
 
     /**
      * @return the levelOpsPluginPath path with possibly contained environment variables expanded.
      */
     public String getExpandedLevelOpsPluginPath() {
-        if (StringUtils.isBlank(levelOpsPluginPath)) {
-            return levelOpsPluginPath;
+        if (StringUtils.isBlank(CONFIGURATION.getLevelOpsPluginPath())) {
+            return CONFIGURATION.getLevelOpsPluginPath();
         }
         String expandedPath = "";
         try {
-            expandedPath = Utils.expandEnvironmentVariables(levelOpsPluginPath);
+            expandedPath = Utils.expandEnvironmentVariables(CONFIGURATION.getLevelOpsPluginPath());
         } catch (final EnvironmentVariableNotDefinedException evnde) {
             LOGGER.log(Level.SEVERE, evnde.getMessage() + " Using unexpanded path.");
-            expandedPath = levelOpsPluginPath;
+            expandedPath = CONFIGURATION.getLevelOpsPluginPath();
         }
 
         return expandedPath;
     }
 
     public String getJenkinsStatus() {
-        return jenkinsStatus;
-    }
-
-    public void setJenkinsStatus(String jenkinsStatus) {
-        this.jenkinsStatus = jenkinsStatus;
+        return CONFIGURATION.getJenkinsStatus();
     }
 
     public long getConfigUpdatedAt() {
-        return configUpdatedAt;
-    }
-
-    public void setConfigUpdatedAt(long configUpdatedAt) {
-        this.configUpdatedAt = configUpdatedAt;
+        return CONFIGURATION.getConfigUpdatedAt();
     }
 
     public long getHeartbeatDuration() {
-        return heartbeatDuration;
-    }
-
-    public void setHeartbeatDuration(long heartbeatDuration) {
-        this.heartbeatDuration = heartbeatDuration;
+        return CONFIGURATION.getHeartbeatDuration();
     }
 
     public File getExpandedLevelOpsPluginDir() {
         return new File(this.getExpandedLevelOpsPluginPath());
     }
 
-
     public Boolean isRegistered() {
-        return isRegistered;
+        return CONFIGURATION.getRegistered();
     }
 
     public boolean isExpandedLevelOpsPluginPathNullOrEmpty(){
@@ -237,16 +260,45 @@ public class PropeloPluginImpl extends Plugin {
         return buildReportsDirectory(this.getExpandedLevelOpsPluginPath());
     }
 
+    private boolean checkWorkDirectoryAccess() {
+        File expandedLevelOpsPluginDir = getExpandedLevelOpsPluginDir();
+        File tmp = null;
+        try {
+            tmp = File.createTempFile("propelo", "access_check", expandedLevelOpsPluginDir);
+            return true;
+        }
+        catch (IOException e){
+            LOGGER.log(Level.SEVERE, "Unable to use the propelo plugin directory {0}. Either the path doesn't refer to a directory or the directory cannot be accessed.", expandedLevelOpsPluginDir.toPath());
+        }
+        finally{
+            if (tmp != null) {
+                FileUtils.deleteQuietly(tmp);
+            }
+        }
+        return false;
+    }
+
     private void deleteOlderDirectories() {
         File currentDataDirectoryWithVersion = getDataDirectoryWithVersion();
         File expandedLevelOpsPluginDir = getExpandedLevelOpsPluginDir();
-        if (expandedLevelOpsPluginDir != null && expandedLevelOpsPluginDir.exists() && currentDataDirectoryWithVersion != null) {
-            for (File file : Objects.requireNonNull(expandedLevelOpsPluginDir.listFiles(), "Unable to use the Propelo plugin directory '" + expandedLevelOpsPluginDir.getPath() + "'. Either the path doesn't refer to a firectory or the directory cannot be accessed.")) {
-                Matcher matcher = OLDER_DIRECTORIES_PATTERN.matcher(file.getName());
-                if (matcher.find() && !file.getName().equalsIgnoreCase(currentDataDirectoryWithVersion.getName())) {
-                    FileUtils.deleteQuietly(file);
-                }
-            }
+        if (expandedLevelOpsPluginDir == null || !expandedLevelOpsPluginDir.exists() || currentDataDirectoryWithVersion == null) {
+            LOGGER.log(Level.FINE, "Skipping old directories deletion: plugin_dir={0}, todays_data_directory_name={1}", new Object[]{expandedLevelOpsPluginDir, currentDataDirectoryWithVersion});
+            return;
+        }
+
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(
+                expandedLevelOpsPluginDir.toPath(),
+                (path) -> {
+                    boolean use = OLDER_DIRECTORIES_PATTERN.matcher(path.getFileName().toString()).find() && !currentDataDirectoryWithVersion.getName().equalsIgnoreCase(path.getFileName().toString());
+                    LOGGER.log(Level.FINEST, "Filering files... accept {0}? {1}", new Object[]{path.toString(), use});
+                    return use;
+                })) {
+            ds.forEach(path -> {
+                LOGGER.log(Level.FINER, "Deleting file: {0}", path);
+                FileUtils.deleteQuietly(path.toFile());
+            });
+        } catch (SecurityException | IOException e) {
+            LOGGER.log(Level.SEVERE, "Unable to delete all the old directories in " + expandedLevelOpsPluginDir, e);
         }
     }
 
@@ -288,43 +340,23 @@ public class PropeloPluginImpl extends Plugin {
     }
 
     public String getJenkinsUserName() {
-        return jenkinsUserName;
-    }
-
-    public void setJenkinsUserName(String jenkinsUserName) {
-        this.jenkinsUserName = jenkinsUserName;
+        return CONFIGURATION.getJenkinsUserName();
     }
 
     public Secret getJenkinsUserToken() {
-        return jenkinsUserToken;
-    }
-
-    public void setJenkinsUserToken(Secret jenkinsUserToken) {
-        this.jenkinsUserToken = jenkinsUserToken;
+        return CONFIGURATION.getJenkinsUserToken();
     }
 
     public String getBullseyeXmlResultPaths() {
-        return bullseyeXmlResultPaths;
-    }
-
-    public void setBullseyeXmlResultPath(String bullseyeXmlResultPaths) {
-        this.bullseyeXmlResultPaths = bullseyeXmlResultPaths;
+        return CONFIGURATION.getBullseyeXmlResultPaths();
     }
 
     public boolean isTrustAllCertificates() {
-        return trustAllCertificates;
-    }
-
-    public void setTrustAllCertificates(boolean trustAllCertificates) {
-        this.trustAllCertificates = trustAllCertificates;
+        return CONFIGURATION.isTrustAllCertificates();
     }
 
     public String getProductIds() {
-        return productIds;
-    }
-
-    public void setProductIds(String productIds) {
-        this.productIds = productIds;
+        return CONFIGURATION.getProductIds();
     }
 
     private List<String> parseProductIdsList(String productIds){
@@ -338,35 +370,20 @@ public class PropeloPluginImpl extends Plugin {
         return Arrays.asList(productIdsSplit);
     }
     public List<String> getProductIdsList(){
-        return parseProductIdsList(this.productIds);
+        return parseProductIdsList(CONFIGURATION.getProductIds());
     }
 
     public String getJenkinsInstanceName() {
-        return jenkinsInstanceName;
-    }
-
-    public void setJenkinsInstanceName(String jenkinsInstanceName) {
-        this.jenkinsInstanceName = jenkinsInstanceName;
-    }
-
-    public String getApplicationType() {
-        return applicationType;
-    }
-
-    public void setApplicationType(String applicationType) {
-        this.applicationType = applicationType == null ? "" : applicationType;
+        return CONFIGURATION.getJenkinsInstanceName();
     }
 
     /**
-     * API base URL for SEI requests: Harness region from {@link #applicationType} when set, otherwise file/default config.
+     * API base URL for SEI requests from the selected Harness region, otherwise file/default config.
      */
     public String getEffectiveLevelOpsApiUrl() {
-        if (StringUtils.isNotBlank(applicationType)) {
-            try {
-                return ApplicationType.fromString(applicationType).getTargetUrl();
-            } catch (IllegalArgumentException e) {
-                LOGGER.log(Level.WARNING, "Unknown applicationType \"" + applicationType + "\", using default config API URL", e);
-            }
+        ApplicationType type = CONFIGURATION.getApplicationType();
+        if (type != null) {
+            return type.getTargetUrl();
         }
         return LevelOpsPluginConfigService.getInstance().getLevelopsConfig().getApiUrl();
     }
@@ -379,7 +396,7 @@ public class PropeloPluginImpl extends Plugin {
                 instance.getExpandedLevelOpsPluginDir(),
                 instance.getDataDirectory(), instance.getDataDirectoryWithVersion());
         ProxyConfigService.ProxyConfig proxyConfig = ProxyConfigService.generateConfigFromJenkinsProxyConfiguration(Jenkins.getInstanceOrNull());
-        return LevelOpsPluginConfigValidator.performApiKeyValidation(instance.getEffectiveLevelOpsApiUrl(), levelOpsApiKey, trustAllCertificates,
+        return LevelOpsPluginConfigValidator.performApiKeyValidation(getEffectiveLevelOpsApiUrl(), levelOpsApiKey, isTrustAllCertificates(),
                 jenkinsInstanceGuidService.createOrReturnInstanceGuid(), instance.getJenkinsInstanceName(), instance.getPluginVersionString(), proxyConfig);
     }
 
@@ -391,13 +408,13 @@ public class PropeloPluginImpl extends Plugin {
             JenkinsStatusInfo details = JenkinsStatusService.getInstance().getStatus(resultFile);
             if (isRegistered()) { // Instance is registered...
                 if (details.getLastFailedHeartbeat().after(details.getLastSuccessfulHeartbeat())) {
-                    setJenkinsStatus("Trying to connect to LevelOps. Disconnected since " + details.getLastSuccessfulHeartbeat());
+                    CONFIGURATION.setJenkinsStatus("Trying to connect to LevelOps. Disconnected since " + details.getLastSuccessfulHeartbeat());
                 } else {
-                    setJenkinsStatus("Success, connected since " + details.getLastSuccessfulHeartbeat());
+                    CONFIGURATION.setJenkinsStatus("Success, connected since " + details.getLastSuccessfulHeartbeat());
                 }
                 return FormValidation.ok();
             } else {
-                setJenkinsStatus("Registering Jenkins Instance....");
+                CONFIGURATION.setJenkinsStatus("Registering Jenkins Instance....");
             }
         } catch (LoadFileException e) {
             String errorMessage = "Unable to use the work directory provided in 'Propelo Plugins Directory'. The directory provided must be accessible and writeable by the user running the Jenkins process.";
@@ -436,7 +453,7 @@ public class PropeloPluginImpl extends Plugin {
 
         ProxyConfigService.ProxyConfig proxyConfig = ProxyConfigService.generateConfigFromJenkinsProxyConfiguration(Jenkins.getInstanceOrNull());
 
-        BlueOceanRestClient restClient = new BlueOceanRestClient(jenkinsBaseUrl, jenkinsUserName, jenkinsUserToken, trustAllCertificates, JsonUtils.buildObjectMapper(), proxyConfig);
+        BlueOceanRestClient restClient = new BlueOceanRestClient(jenkinsBaseUrl, jenkinsUserName, jenkinsUserToken, isTrustAllCertificates(), JsonUtils.buildObjectMapper(), proxyConfig);
         List<Organization> organizations = null;
         try {
             organizations = restClient.getOrganizations();
@@ -490,7 +507,7 @@ public class PropeloPluginImpl extends Plugin {
         if(StringUtils.isBlank(jenkinsBaseUrl)) {
             return FormValidation.error("Jenkins Base Url cannot be null or empty!");
         } else {
-            return performBlueOceanRestValidation(Jenkins.get().getRootUrl(), jenkinsUserName, jenkinsUserToken.getPlainText(), true, false, false);
+            return performBlueOceanRestValidation(Jenkins.get().getRootUrl(), getJenkinsUserName(), getJenkinsUserToken().getPlainText(), true, false, false);
         }
     }
 
@@ -501,7 +518,7 @@ public class PropeloPluginImpl extends Plugin {
         if(StringUtils.isBlank(jenkinsUserName)) {
             return FormValidation.error("Jenkins User Name cannot be null or empty!");
         } else {
-            return performBlueOceanRestValidation(Jenkins.get().getRootUrl(), jenkinsUserName, jenkinsUserToken.getPlainText(), false, true, false);
+            return performBlueOceanRestValidation(Jenkins.get().getRootUrl(), jenkinsUserName, getJenkinsUserToken().getPlainText(), false, true, false);
         }
     }
 
@@ -571,7 +588,7 @@ public class PropeloPluginImpl extends Plugin {
             }
         }
         if (!expandedPathMessage.isEmpty()) {
-            return FormValidation.ok(expandedPathMessage.substring(0, expandedPathMessage.length() - 2));
+            return FormValidation.ok(expandedPathMessage.substring(0, expandedPathMessage.length()));
         } else {
             return FormValidation.ok();
         }

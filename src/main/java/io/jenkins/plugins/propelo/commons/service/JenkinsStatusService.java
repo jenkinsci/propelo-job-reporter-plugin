@@ -95,7 +95,7 @@ public class JenkinsStatusService {
         try {
             FileUtils.createDirectoryRecursively(expandedLevelOpsPluginDir);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "JenkinsStatusService.createFileIfNotExists Error creating expandedLevelOpsPluginDir!", e);
+            LOGGER.log(Level.SEVERE, "JenkinsStatusService.createFileIfNotExists Error creating expandedLevelOpsPluginDir!", e);
             throw e;
         }
         File file = new File(expandedLevelOpsPluginDir, JENKINS_HEARTBEAT_INFO_FILE);
