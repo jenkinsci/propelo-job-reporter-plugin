@@ -13,6 +13,7 @@ import io.jenkins.plugins.propelo.commons.service.BlueOceanRestClient;
 import io.jenkins.plugins.propelo.commons.service.JenkinsInstanceGuidService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsStatusService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsStatusService.LoadFileException;
+import io.jenkins.plugins.propelo.commons.service.LevelOpsPluginConfigService;
 import io.jenkins.plugins.propelo.commons.service.LevelOpsPluginConfigValidator;
 import io.jenkins.plugins.propelo.commons.service.ProxyConfigService;
 import io.jenkins.plugins.propelo.commons.utils.DateUtils;
@@ -375,6 +376,18 @@ public class PropeloPluginImpl extends Plugin {
     public String getJenkinsInstanceName() {
         return CONFIGURATION.getJenkinsInstanceName();
     }
+
+    /**
+     * API base URL for SEI requests from the selected Harness region, otherwise file/default config.
+     */
+    public String getEffectiveLevelOpsApiUrl() {
+        ApplicationType type = CONFIGURATION.getApplicationType();
+        if (type != null) {
+            return type.getTargetUrl();
+        }
+        return LevelOpsPluginConfigService.getInstance().getLevelopsConfig().getApiUrl();
+    }
+
     @POST
     public FormValidation doCheckLevelOpsApiKey(final StaplerRequest res, final StaplerResponse rsp,
                                                 @QueryParameter("value") final Secret levelOpsApiKey) {
@@ -383,7 +396,7 @@ public class PropeloPluginImpl extends Plugin {
                 instance.getExpandedLevelOpsPluginDir(),
                 instance.getDataDirectory(), instance.getDataDirectoryWithVersion());
         ProxyConfigService.ProxyConfig proxyConfig = ProxyConfigService.generateConfigFromJenkinsProxyConfiguration(Jenkins.getInstanceOrNull());
-        return LevelOpsPluginConfigValidator.performApiKeyValidation(levelOpsApiKey, isTrustAllCertificates(),
+        return LevelOpsPluginConfigValidator.performApiKeyValidation(getEffectiveLevelOpsApiUrl(), levelOpsApiKey, isTrustAllCertificates(),
                 jenkinsInstanceGuidService.createOrReturnInstanceGuid(), instance.getJenkinsInstanceName(), instance.getPluginVersionString(), proxyConfig);
     }
 

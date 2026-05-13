@@ -70,7 +70,6 @@ public class LevelOpsMgmtLink extends ManagementLink {
 
         Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
 
-        final PropeloPluginImpl plugin = PropeloPluginImpl.getInstance();
         CONFIGURATION.setLevelOpsApiKey(Secret.fromString(levelOpsApiKey));
         CONFIGURATION.setLevelOpsPluginPath(levelOpsPluginPath);
         CONFIGURATION.setJenkinsBaseUrl(Jenkins.get().getRootUrl());
@@ -82,7 +81,7 @@ public class LevelOpsMgmtLink extends ManagementLink {
         CONFIGURATION.setTrustAllCertificates(trustAllCertificates);
         CONFIGURATION.setApplicationType(ApplicationType.fromString(applicationType));
         CONFIGURATION.save();
-        LOGGER.log(Level.CONFIG, "Saving plugin settings done. plugin = {0}", plugin);
+        LOGGER.log(Level.CONFIG, "Saving plugin settings done. configuration = {0}", CONFIGURATION);
         rsp.sendRedirect(res.getContextPath() + "/" + PLUGIN_NAME);
     }
 

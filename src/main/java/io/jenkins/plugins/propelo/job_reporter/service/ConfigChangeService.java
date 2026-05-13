@@ -12,7 +12,6 @@ import io.jenkins.plugins.propelo.commons.service.JobConfigChangeNotificationSer
 import io.jenkins.plugins.propelo.commons.service.JobRunParserService;
 import io.jenkins.plugins.propelo.commons.service.JobSCMService;
 import io.jenkins.plugins.propelo.commons.service.JobSCMStorageService;
-import io.jenkins.plugins.propelo.commons.service.LevelOpsPluginConfigService;
 import io.jenkins.plugins.propelo.commons.service.ProxyConfigService;
 import io.jenkins.plugins.propelo.commons.utils.MimickedUser;
 import io.jenkins.plugins.propelo.job_reporter.plugins.PropeloPluginImpl;
@@ -72,7 +71,7 @@ public class ConfigChangeService {
         LOGGER.finest("Send Job Config Change Notifications to Propelo is true, performing job config change notification");
         ProxyConfigService.ProxyConfig proxyConfig = ProxyConfigService.generateConfigFromJenkinsProxyConfiguration(Jenkins.getInstanceOrNull());
 
-        JobConfigChangeNotificationService jobConfigChangeNotificationService = new JobConfigChangeNotificationService(LevelOpsPluginConfigService.getInstance().getLevelopsConfig().getApiUrl(),mapper);
+        JobConfigChangeNotificationService jobConfigChangeNotificationService = new JobConfigChangeNotificationService(plugin.getEffectiveLevelOpsApiUrl(),mapper);
         List<String> runIds = null;
         try {
             runIds = jobConfigChangeNotificationService.submitJobConfigChangeRequest(plugin.getLevelOpsApiKey().getPlainText(),

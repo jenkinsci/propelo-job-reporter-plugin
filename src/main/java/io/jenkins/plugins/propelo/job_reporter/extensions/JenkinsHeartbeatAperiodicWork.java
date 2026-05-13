@@ -12,7 +12,6 @@ import io.jenkins.plugins.propelo.commons.service.GenericRequestService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsInstanceGuidService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsStatusService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsStatusService.LoadFileException;
-import io.jenkins.plugins.propelo.commons.service.LevelOpsPluginConfigService;
 import io.jenkins.plugins.propelo.commons.service.ProxyConfigService;
 import io.jenkins.plugins.propelo.commons.utils.JsonUtils;
 import io.jenkins.plugins.propelo.job_reporter.plugins.PropeloPluginImpl;
@@ -35,7 +34,6 @@ public class JenkinsHeartbeatAperiodicWork extends AperiodicWork {
     private static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
     private static final ObjectMapper mapper = JsonUtils.buildObjectMapper();
     private final PropeloPluginImpl plugin = PropeloPluginImpl.getInstance();
-    private final LevelOpsPluginConfigService levelOpsPluginConfigService = new LevelOpsPluginConfigService();
 
     public JenkinsHeartbeatAperiodicWork() {
     }
@@ -76,7 +74,7 @@ public class JenkinsHeartbeatAperiodicWork extends AperiodicWork {
         }
         LOGGER.log(Level.INFO, "Heartbeat Request = " + hbRequestPayload);
         GenericRequestService genericRequestService = new GenericRequestService(
-                levelOpsPluginConfigService.getLevelopsConfig().getApiUrl(), mapper);
+                plugin.getEffectiveLevelOpsApiUrl(), mapper);
 
         ProxyConfigService.ProxyConfig proxyConfig = ProxyConfigService.generateConfigFromJenkinsProxyConfiguration(Jenkins.getInstanceOrNull());
         return sendHeartbeat(hbRequestPayload, genericRequestService, plugin, proxyConfig);
