@@ -58,6 +58,7 @@ public class LevelOpsMgmtLink extends ManagementLink {
                                @QueryParameter("bullseyeXmlResultPaths") final String bullseyeXmlResultPaths,
                                @QueryParameter("productIds") final String productIds,
                                @QueryParameter("jenkinsInstanceName") final String jenkinsInstanceName,
+                               @QueryParameter("applicationType") final String applicationType,
                                @QueryParameter("trustAllCertificates") final boolean trustAllCertificates
     ) throws IOException {
         LOGGER.log(Level.FINE, "Starting doSaveSettings, levelOpsApiKey = {0}, levelOpsPluginPath = {1}, " +
@@ -75,6 +76,7 @@ public class LevelOpsMgmtLink extends ManagementLink {
         plugin.setBullseyeXmlResultPath(bullseyeXmlResultPaths);
         plugin.setProductIds(productIds);
         plugin.setJenkinsInstanceName(jenkinsInstanceName);
+        plugin.setApplicationType(applicationType);
         plugin.setTrustAllCertificates(trustAllCertificates);
         plugin.save();
         LOGGER.log(Level.CONFIG, "Saving plugin settings done. plugin = {0}", plugin);

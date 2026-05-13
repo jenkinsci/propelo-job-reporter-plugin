@@ -5,11 +5,13 @@ import hudson.Plugin;
 import hudson.scheduler.CronTab;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
+import io.jenkins.plugins.propelo.commons.models.ApplicationType;
 import io.jenkins.plugins.propelo.commons.models.JenkinsStatusInfo;
 import io.jenkins.plugins.propelo.commons.models.blue_ocean.Organization;
 import io.jenkins.plugins.propelo.commons.service.BlueOceanRestClient;
 import io.jenkins.plugins.propelo.commons.service.JenkinsInstanceGuidService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsStatusService;
+import io.jenkins.plugins.propelo.commons.service.LevelOpsPluginConfigService;
 import io.jenkins.plugins.propelo.commons.service.LevelOpsPluginConfigValidator;
 import io.jenkins.plugins.propelo.commons.service.ProxyConfigService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsStatusService.LoadFileException;
@@ -61,6 +63,8 @@ public class PropeloPluginImpl extends Plugin {
     private Secret jenkinsUserToken = Secret.fromString("");
     private long heartbeatDuration = 60;
     private String bullseyeXmlResultPaths = "";
+    /** Value from the settings form, e.g. {@code SEI-Harness-PROD0}; blank keeps legacy {@link LevelOpsPluginConfigService} URL. */
+    private String applicationType = "";
     private long configUpdatedAt = System.currentTimeMillis();
     private static PropeloPluginImpl instance = null;
     private static final Pattern OLDER_DIRECTORIES_PATTERN = Pattern.compile("^(run-complete-data-)");
@@ -345,6 +349,28 @@ public class PropeloPluginImpl extends Plugin {
         this.jenkinsInstanceName = jenkinsInstanceName;
     }
 
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType == null ? "" : applicationType;
+    }
+
+    /**
+     * API base URL for SEI requests: Harness region from {@link #applicationType} when set, otherwise file/default config.
+     */
+    public String getEffectiveLevelOpsApiUrl() {
+        if (StringUtils.isNotBlank(applicationType)) {
+            try {
+                return ApplicationType.fromString(applicationType).getTargetUrl();
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, "Unknown applicationType \"" + applicationType + "\", using default config API URL", e);
+            }
+        }
+        return LevelOpsPluginConfigService.getInstance().getLevelopsConfig().getApiUrl();
+    }
+
     @POST
     public FormValidation doCheckLevelOpsApiKey(final StaplerRequest res, final StaplerResponse rsp,
                                                 @QueryParameter("value") final Secret levelOpsApiKey) {
@@ -353,7 +379,7 @@ public class PropeloPluginImpl extends Plugin {
                 instance.getExpandedLevelOpsPluginDir(),
                 instance.getDataDirectory(), instance.getDataDirectoryWithVersion());
         ProxyConfigService.ProxyConfig proxyConfig = ProxyConfigService.generateConfigFromJenkinsProxyConfiguration(Jenkins.getInstanceOrNull());
-        return LevelOpsPluginConfigValidator.performApiKeyValidation(levelOpsApiKey, trustAllCertificates,
+        return LevelOpsPluginConfigValidator.performApiKeyValidation(instance.getEffectiveLevelOpsApiUrl(), levelOpsApiKey, trustAllCertificates,
                 jenkinsInstanceGuidService.createOrReturnInstanceGuid(), instance.getJenkinsInstanceName(), instance.getPluginVersionString(), proxyConfig);
     }
 

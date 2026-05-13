@@ -17,7 +17,6 @@ import io.jenkins.plugins.propelo.commons.service.JobRunGitChangesService;
 import io.jenkins.plugins.propelo.commons.service.JobRunParserService;
 import io.jenkins.plugins.propelo.commons.service.JobRunPerforceChangesService;
 import io.jenkins.plugins.propelo.commons.service.JobSCMService;
-import io.jenkins.plugins.propelo.commons.service.LevelOpsPluginConfigService;
 import io.jenkins.plugins.propelo.commons.service.ProxyConfigService;
 import io.jenkins.plugins.propelo.commons.utils.DateUtils;
 import io.jenkins.plugins.propelo.commons.utils.JsonUtils;
@@ -207,7 +206,7 @@ public class LevelOpsRunListener extends RunListener<Run> {
             LOGGER.severe("Jenkins Instance UID is not valid... make sure that the Propelo's work directory provided in the settings page is accessible and writeable by the user running the Jenkins process... The job report will be sent but very likely it won't be usable until the issue in this Jenkins instance is fixed. Please contact Propelo's support to get further assistance.");
         }
 
-        JobRunCompleteNotificationService jobRunCompleteNotificationService = new JobRunCompleteNotificationService(LevelOpsPluginConfigService.getInstance().getLevelopsConfig().getApiUrl(), mapper);
+        JobRunCompleteNotificationService jobRunCompleteNotificationService = new JobRunCompleteNotificationService(plugin.getEffectiveLevelOpsApiUrl(), mapper);
         List<String> runIds;
         try {
             String jobFullName = (jobRunDetail != null) ? jobRunDetail.getJobFullName() : null;
@@ -224,7 +223,7 @@ public class LevelOpsRunListener extends RunListener<Run> {
     }
 
     private void reportError(final String payload) {
-        GenericRequestService genericRequestService = new GenericRequestService(LevelOpsPluginConfigService.getInstance().getLevelopsConfig().getApiUrl(), mapper);
+        GenericRequestService genericRequestService = new GenericRequestService(plugin.getEffectiveLevelOpsApiUrl(), mapper);
         try {
             genericRequestService.performGenericRequest(plugin.getLevelOpsApiKey().getPlainText(), "pluginErrorReport", payload, plugin.isTrustAllCertificates(), null, ProxyConfigService.generateConfigFromJenkinsProxyConfiguration(Jenkins.getInstanceOrNull()));
         } catch (IOException e) {
