@@ -34,6 +34,10 @@ public class LevelOpsPluginConfigServiceTest {
         applicationType = PropeloPluginImpl.getInstance().getApplicationType();
         Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_PROD4);
 
+        CONFIGURATION.setApplicationType(ApplicationType.fromString("SEI-HARNESS-PROD6"));
+        applicationType = PropeloPluginImpl.getInstance().getApplicationType();
+        Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_PROD6);
+
         CONFIGURATION.setApplicationType(ApplicationType.fromString("SEI-HARNESS-EU1"));
         applicationType = PropeloPluginImpl.getInstance().getApplicationType();
         Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_EU1);

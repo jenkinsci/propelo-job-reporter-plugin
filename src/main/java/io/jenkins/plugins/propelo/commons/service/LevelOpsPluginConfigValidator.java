@@ -26,7 +26,7 @@ public class LevelOpsPluginConfigValidator {
         return false;
     }
 
-    public static FormValidation performApiKeyValidation(Secret levelOpsApiKey, boolean trustAllCertificates,
+    public static FormValidation performApiKeyValidation(String levelOpsApiUrl, Secret levelOpsApiKey, boolean trustAllCertificates,
                                                          String jenkinsInstanceGuid, String instanceName,
                                                          String pluginVersionString, final ProxyConfigService.ProxyConfig proxyConfig) {
         if ((levelOpsApiKey == null) || (levelOpsApiKey.getPlainText().length() == 0)) {
@@ -38,7 +38,6 @@ public class LevelOpsPluginConfigValidator {
         if (isLevelOpsApiKeyEncrypted(levelOpsApiKeyStr)) {
             return FormValidation.ok();
         }
-        String levelOpsApiUrl = LevelOpsPluginConfigService.getInstance().getLevelopsConfig().getApiUrl();
         GenericRequestService genericRequestService = new GenericRequestService(levelOpsApiUrl, mapper);
         String hbRequestPayload;
         try {
