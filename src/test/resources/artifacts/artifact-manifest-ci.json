@@ -3,7 +3,7 @@
   "style": "GH-BUILD",
   "artifact": {
     "type": "container",
-    "location": "nexus-aws-prod.corp.internal.citizensbank.com:7990/repository/docker-internal",
+    "location": "registry.example.com/repository/docker-internal",
     "name": "sei-verify-demo/app",
     "qualifier": "1.0.0-42",
     "hash": "sha256:deadbeef",
