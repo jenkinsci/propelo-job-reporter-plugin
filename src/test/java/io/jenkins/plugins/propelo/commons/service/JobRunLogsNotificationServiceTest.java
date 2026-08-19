@@ -66,7 +66,7 @@ public class JobRunLogsNotificationServiceTest {
             JobRunCompleteNotificationService jobRunCompleteNotificationService = new JobRunCompleteNotificationService(API_URL_LOCAL, JsonUtils.buildObjectMapper());
             List<String> runIds = jobRunCompleteNotificationService.submitJobRunCompleteRequest(apiKey, jobRunDetail,
                     "https://github.com/testadmin1-levelops/openapi-generator.git", null, UUID.randomUUID().toString(),
-                    "Jenkins US1", "https://jenkins.dev.levelops.io/", false, jobRunCompleteData, scmCommitIds, null, null);
+                    "Jenkins US1", "https://jenkins.dev.levelops.io/", false, jobRunCompleteData, scmCommitIds, null, null, null, null, null);
             Assert.assertNotNull(runIds);
         } finally {
             if((completeDataZipFile != null) && (completeDataZipFile.exists())) {

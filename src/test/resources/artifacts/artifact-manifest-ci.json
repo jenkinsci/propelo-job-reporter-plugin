@@ -1,0 +1,13 @@
+{
+  "pipeline": "sei-verify-ci",
+  "style": "GH-BUILD",
+  "artifact": {
+    "type": "container",
+    "location": "nexus-aws-prod.corp.internal.citizensbank.com:7990/repository/docker-internal",
+    "name": "sei-verify-demo/app",
+    "qualifier": "1.0.0-42",
+    "hash": "sha256:deadbeef",
+    "input": false,
+    "output": true
+  }
+}

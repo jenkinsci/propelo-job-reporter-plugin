@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jenkins.plugins.propelo.commons.models.JobRunCompleteData;
 import io.jenkins.plugins.propelo.commons.models.JobRunDetail;
 import io.jenkins.plugins.propelo.commons.models.blue_ocean.JobRun;
+import io.jenkins.plugins.propelo.commons.models.jenkins.saas.CiCdJobRunArtifact;
 import io.jenkins.plugins.propelo.commons.models.jenkins.saas.GenericResponse;
 import io.jenkins.plugins.propelo.commons.models.jenkins.saas.JobRunCompleteRequest;
 import io.jenkins.plugins.propelo.commons.models.jenkins.saas.JobRunCompleteResponse;
@@ -62,7 +63,8 @@ public class JobRunCompleteNotificationService {
     public List<String> submitJobRunCompleteRequest(final String apiKey, JobRunDetail jobRunDetail, String scmUrl, String scmUserId,
                                                     String jenkinsInstanceGuid, String jenkinsInstanceName, String jenkinsInstanceUrl, final boolean trustAllCertificates,
                                                     JobRunCompleteData jobRunCompleteData,
-                                                    List<String> scmCommitIds, UUID failedLogFileUUID, final ProxyConfigService.ProxyConfig proxyConfig) throws IOException {
+                                                    List<String> scmCommitIds, List<CiCdJobRunArtifact> artifacts, Boolean ci, Boolean cd,
+                                                    UUID failedLogFileUUID, final ProxyConfigService.ProxyConfig proxyConfig) throws IOException {
         File jobRunCompleteDataDirectory = null;
         File jobRunCompleteDataZipFile = null;
         try {
@@ -73,7 +75,8 @@ public class JobRunCompleteNotificationService {
             }
             JobRunCompleteRequest jobRunCompleteRequest = new JobRunCompleteRequest(jobRunDetail.getJobName(), jobRunDetail.getUserId(),
                     jobRunDetail.getJobRunParams(), scmUrl, scmUserId, jobRunDetail.getStartTime(), jobRunDetail.getResult(), jobRunDetail.getDuration(), jobRunDetail.getBuildNumber(), jenkinsInstanceGuid, jenkinsInstanceName, jenkinsInstanceUrl, jobRun,
-                    jobRunDetail.getJobFullName(), jobRunDetail.getJobNormalizedFullName(), jobRunDetail.getBranchName(), jobRunDetail.getModuleName(), scmCommitIds, jobRunDetail.getTriggerChain());
+                    jobRunDetail.getJobFullName(), jobRunDetail.getJobNormalizedFullName(), jobRunDetail.getBranchName(), jobRunDetail.getModuleName(), scmCommitIds, jobRunDetail.getTriggerChain(),
+                    artifacts, ci, cd);
 
             String payload;
             try {
