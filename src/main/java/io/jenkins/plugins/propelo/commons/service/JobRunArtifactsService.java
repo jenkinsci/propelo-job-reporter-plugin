@@ -115,12 +115,26 @@ public class JobRunArtifactsService {
         String name = text(node, "name");
         String location = text(node, "location");
         String qualifier = text(node, "qualifier");
-        if (isBlank(name) && isBlank(location) && isBlank(qualifier)) {
+        String type = text(node, "type");
+        List<String> missingFields = new ArrayList<>();
+        if (isBlank(type)) {
+            missingFields.add("type");
+        }
+        if (isBlank(location)) {
+            missingFields.add("location");
+        }
+        if (isBlank(name)) {
+            missingFields.add("name");
+        }
+        if (isBlank(qualifier)) {
+            missingFields.add("qualifier");
+        }
+        if (!missingFields.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Skipping SEI artifact with incomplete identity, missing required fields: {0}", missingFields);
             return null;
         }
         Boolean input = bool(node, "input");
         Boolean output = bool(node, "output");
-        String type = text(node, "type");
         String hash = text(node, "hash");
         Map<String, String> metadata = null;
         if (node.has("metadata") && node.get("metadata").isObject()) {

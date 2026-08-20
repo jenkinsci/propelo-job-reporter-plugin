@@ -56,6 +56,20 @@ public class JobRunArtifactsServiceTest {
     }
 
     @Test
+    public void shouldSkipArtifactWithIncompleteIdentity() throws Exception {
+        ObjectMapper mapper = JsonUtils.buildObjectMapper();
+        JobRunArtifactsService service = new JobRunArtifactsService(mapper);
+        File manifest = resource("artifacts/artifact-manifest-incomplete.json");
+
+        List<CiCdJobRunArtifact> artifacts = new ArrayList<>();
+        service.collectFromFile(manifest, artifacts);
+
+        Assert.assertEquals(0, artifacts.size());
+        Assert.assertFalse(service.isCi(artifacts));
+        Assert.assertFalse(service.isCd(artifacts));
+    }
+
+    @Test
     public void shouldParseSingleArchivedArtifactForRunWithoutDuplicates() throws Exception {
         ObjectMapper mapper = JsonUtils.buildObjectMapper();
         JobRunArtifactsService service = new JobRunArtifactsService(mapper);

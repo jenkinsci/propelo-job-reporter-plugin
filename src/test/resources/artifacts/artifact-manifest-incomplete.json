@@ -1,0 +1,9 @@
+{
+  "pipeline": "sei-verify-ci",
+  "artifact": {
+    "type": "container",
+    "name": "sei-verify-demo/app",
+    "input": false,
+    "output": true
+  }
+}

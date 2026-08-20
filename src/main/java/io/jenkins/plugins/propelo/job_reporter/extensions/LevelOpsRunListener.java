@@ -153,11 +153,21 @@ public class LevelOpsRunListener extends RunListener<Run> {
                 scmCommitIds = new ArrayList<>();
             LOGGER.log(Level.FINEST, "scmCommitIds = {0}", scmCommitIds);
 
-            JobRunArtifactsService jobRunArtifactsService = new JobRunArtifactsService(mapper);
-            List<CiCdJobRunArtifact> artifacts = jobRunArtifactsService.parseArtifactsForRun(run);
-            Boolean ci = jobRunArtifactsService.isCi(artifacts) ? Boolean.TRUE : null;
-            Boolean cd = jobRunArtifactsService.isCd(artifacts) ? Boolean.TRUE : null;
-            LOGGER.log(Level.FINE, "artifacts count={0}, ci={1}, cd={2}", new Object[]{artifacts.size(), ci, cd});
+            List<CiCdJobRunArtifact> artifacts = new ArrayList<>();
+            Boolean ci = null;
+            Boolean cd = null;
+            try {
+                JobRunArtifactsService jobRunArtifactsService = new JobRunArtifactsService(mapper);
+                artifacts = jobRunArtifactsService.parseArtifactsForRun(run);
+                ci = jobRunArtifactsService.isCi(artifacts) ? Boolean.TRUE : null;
+                cd = jobRunArtifactsService.isCd(artifacts) ? Boolean.TRUE : null;
+                LOGGER.log(Level.FINE, "artifacts count={0}, ci={1}, cd={2}", new Object[]{artifacts.size(), ci, cd});
+            } catch (Exception e) {
+                artifacts = new ArrayList<>();
+                ci = null;
+                cd = null;
+                LOGGER.log(Level.WARNING, "Failed to parse SEI artifacts for job run; reporting job run without artifacts", e);
+            }
 
             JobRunPerforceChangesService jobRunPerforceChangesService = new JobRunPerforceChangesService(xmlMapper);
             List<String> perforceCommitIds = jobRunPerforceChangesService.parsePerforceCommitsForRun(run);
