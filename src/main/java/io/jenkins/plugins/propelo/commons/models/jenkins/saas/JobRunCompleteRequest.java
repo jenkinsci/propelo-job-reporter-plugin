@@ -66,9 +66,19 @@ public class JobRunCompleteRequest {
     @JsonProperty("trigger_chain")
     private final Set<JobTrigger> triggerChain;
 
+    @JsonProperty("artifacts")
+    private final List<CiCdJobRunArtifact> artifacts;
+
+    @JsonProperty("ci")
+    private final Boolean ci;
+
+    @JsonProperty("cd")
+    private final Boolean cd;
+
 
     public JobRunCompleteRequest(String jobName, String userId, List<JobRunParam> jobRunParams, String repoUrl, String scmUserId,
-                                 long startTime, String result, long duration, long buildNumber, String jenkinsInstanceGuid, String jenkinsInstanceName, String jenkinsInstanceUrl, JobRun jobRun, String jobFullName, String jobNormalizedFullName, String branchName, String moduleName, List<String> scmCommitIds, Set<JobTrigger> triggerChain) {
+                                 long startTime, String result, long duration, long buildNumber, String jenkinsInstanceGuid, String jenkinsInstanceName, String jenkinsInstanceUrl, JobRun jobRun, String jobFullName, String jobNormalizedFullName, String branchName, String moduleName, List<String> scmCommitIds, Set<JobTrigger> triggerChain,
+                                 List<CiCdJobRunArtifact> artifacts, Boolean ci, Boolean cd) {
         this.jobName = jobName;
         this.userId = userId;
         this.jobRunParams = jobRunParams;
@@ -88,6 +98,9 @@ public class JobRunCompleteRequest {
         this.moduleName = moduleName;
         this.scmCommitIds = scmCommitIds;
         this.triggerChain = triggerChain;
+        this.artifacts = artifacts;
+        this.ci = ci;
+        this.cd = cd;
     }
 
     public String getJobName() {
@@ -164,5 +177,17 @@ public class JobRunCompleteRequest {
 
     public Set<JobTrigger> getTriggerChain() {
         return triggerChain;
+    }
+
+    public List<CiCdJobRunArtifact> getArtifacts() {
+        return artifacts;
+    }
+
+    public Boolean getCi() {
+        return ci;
+    }
+
+    public Boolean getCd() {
+        return cd;
     }
 }
