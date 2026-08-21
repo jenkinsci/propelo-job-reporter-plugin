@@ -14,7 +14,12 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -35,60 +40,76 @@ public class JobRunGitChangesService {
         this.dataDirectoryWithRotation = dataDirectoryWithRotation;
     }
 
-    protected File getChangeLogFile(File buildDirectory){
-        if (buildDirectory == null){
+    protected List<File> getChangeLogFiles(File buildDirectory) {
+        if (buildDirectory == null) {
             LOGGER.log(Level.FINEST, "buildDirectory is null!");
-            return null;
+            return Collections.emptyList();
         }
-        if(! buildDirectory.exists()){
-            LOGGER.log(Level.FINEST, "buildDirectory does not exist! " + buildDirectory.getAbsolutePath());
-            return null;
-        }
-        File defaultJobRunGitChangesFile = new File(buildDirectory, "changelog.xml");
-        LOGGER.log(Level.FINEST, "defaultJobRunGitChangesFile = " + defaultJobRunGitChangesFile.getAbsolutePath());
-        if (defaultJobRunGitChangesFile.exists()){
-            LOGGER.log(Level.FINEST, "defaultJobRunGitChangesFile exists : " + defaultJobRunGitChangesFile.getAbsolutePath());
-            return defaultJobRunGitChangesFile;
+        if (!buildDirectory.exists()) {
+            LOGGER.log(Level.FINEST, "buildDirectory does not exist! {0}", buildDirectory.getAbsolutePath());
+            return Collections.emptyList();
         }
         File[] children = buildDirectory.listFiles();
-        if (children == null){
+        if (children == null) {
             LOGGER.log(Level.FINEST, "buildDirectory children is null!");
-            return null;
+            return Collections.emptyList();
         }
-        for(File currentChild : children){
-            if (currentChild == null){
-                continue;
-            }
-            if(!currentChild.isFile()){
+        List<File> changeLogFiles = new ArrayList<>();
+        for (File currentChild : children) {
+            if (currentChild == null || !currentChild.isFile()) {
                 continue;
             }
             String fileName = currentChild.getName();
-            if(StringUtils.isBlank(fileName)){
+            if (StringUtils.isBlank(fileName)) {
                 continue;
             }
-            final Matcher matcher = CHANGE_FILE_NAME_PATTERN.matcher(fileName);
-            if(matcher.matches()){
-                LOGGER.log(Level.FINEST, "currentChild matches change file name pattern = " + currentChild.getAbsolutePath());
-                return currentChild;
+            Matcher matcher = CHANGE_FILE_NAME_PATTERN.matcher(fileName);
+            if (!matcher.matches()) {
+                continue;
             }
+            changeLogFiles.add(currentChild);
         }
-        LOGGER.log(Level.FINEST, "change file not found!");
-        return null;
+        changeLogFiles.sort(Comparator.comparing(File::getName));
+        return changeLogFiles;
     }
 
-    public List<String> parseGitCommitsForRun(Run build, JobRunDetail jobRunDetail){
-        File jobRunGitChangesFile = getChangeLogFile(build.getRootDir());
-        if (jobRunGitChangesFile == null){
+    public List<String> parseGitCommitsFromBuildDirectory(File buildDirectory) {
+        List<File> changeLogFiles = getChangeLogFiles(buildDirectory);
+        if (changeLogFiles.isEmpty()) {
+            LOGGER.log(Level.FINEST, "change file not found!");
+            return new ArrayList<>();
+        }
+        JobRunGitChangesParserService parserService = new JobRunGitChangesParserService();
+        Set<String> uniqueCommitIds = new LinkedHashSet<>();
+        for (File changeLogFile : changeLogFiles) {
+            if (changeLogFile.length() == 0) {
+                LOGGER.log(Level.FINE, "Skipping empty changelog file {0}", changeLogFile.getAbsolutePath());
+                continue;
+            }
+            List<String> fileCommitIds = parserService.parseGitChangeCommitIds(changeLogFile);
+            int added = 0;
+            if (fileCommitIds != null) {
+                int before = uniqueCommitIds.size();
+                uniqueCommitIds.addAll(fileCommitIds);
+                added = uniqueCommitIds.size() - before;
+            }
+            LOGGER.log(Level.FINE, "Parsed {0} commit ids from changelog {1} ({2} new)",
+                    new Object[]{fileCommitIds == null ? 0 : fileCommitIds.size(), changeLogFile.getName(), added});
+        }
+        return new ArrayList<>(uniqueCommitIds);
+    }
+
+    public List<String> parseGitCommitsForRun(Run build, JobRunDetail jobRunDetail) {
+        if (build == null) {
             LOGGER.log(Level.FINEST, "jobRunGitChangesFile is null");
             return null;
         }
-        JobRunGitChangesParserService parserService = new JobRunGitChangesParserService();
-        List<String> commitIds = parserService.parseGitChangeCommitIds(jobRunGitChangesFile);
-        return commitIds;
+        return parseGitCommitsFromBuildDirectory(build.getRootDir());
     }
-    public List<String> parseAndSaveGitCommitsForRun(Run build, JobRunDetail jobRunDetail){
+
+    public List<String> parseAndSaveGitCommitsForRun(Run build, JobRunDetail jobRunDetail) {
         List<String> commitIds = parseGitCommitsForRun(build, jobRunDetail);
-        if((commitIds == null) || (commitIds.size() == 0)){
+        if ((commitIds == null) || (commitIds.size() == 0)) {
             LOGGER.finest("JobRunGitChangesService changeCommitIds is null or empty!!");
             return commitIds;
         }
