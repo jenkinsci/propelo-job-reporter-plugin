@@ -1,0 +1,15 @@
+commit 37482a7fcf68e1181fe3b999da2372aa1d85220a
+tree 2222222222222222222222222222222222222222
+parent 2c257ff889e91316bdf9ae5ce384cedde80b9ee2
+author Mock Author <mock@example.com> 2026-08-19 18:00:00 +0530
+committer Mock Author <mock@example.com> 2026-08-19 18:00:00 +0530
+
+    overlapping commit plus second checkout
+
+commit 2c257ff889e91316bdf9ae5ce384cedde80b9ee2
+tree 3333333333333333333333333333333333333333
+parent 0000000000000000000000000000000000000000
+author Mock Author <mock@example.com> 2026-08-19 17:00:00 +0530
+committer Mock Author <mock@example.com> 2026-08-19 17:00:00 +0530
+
+    second checkout commit

@@ -23,6 +23,7 @@ public class Common {
     public static final String RUN_HISTORY_COMPLETE_DATA_ZIP_FILE = "complete-data-temp-%d.zip";
     public static final String RUN_PARAMS_HISTORY_FILE = "run-params.txt";
     public static final String RUN_GIT_CHANGES_HISTORY_FILE = "run-git.txt";
+    public static final String SEI_SCM_COMMIT_IDS = "SEI_SCM_COMMIT_IDS";
     public static final String JOB_FULL_NAME_FILE = "job-full-name.txt";
     public static final String JENKINS_INSTANCE_GUID_FILE = "jenkins-instance-guid.txt";
     public static final String JENKINS_HEARTBEAT_INFO_FILE = "jenkins-status-info.json";

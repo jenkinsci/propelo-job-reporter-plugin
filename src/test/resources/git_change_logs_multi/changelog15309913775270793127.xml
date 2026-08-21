@@ -1,0 +1,15 @@
+commit 37482a7fcf68e1181fe3b999da2372aa1d85220a
+tree 5631baa356db9760d98840497e1377320b46af53
+parent 7e1ffbc8058d732545c6c2e5e67a9ca60f67dd85
+author Mock Author <mock@example.com> 2026-08-19 19:44:32 +0530
+committer Mock Author <mock@example.com> 2026-08-19 19:44:32 +0530
+
+    removing logs
+
+commit 08d386c3b05997a04bf1ffdc0948af0f44b5bd2d
+tree 1111111111111111111111111111111111111111
+parent 37482a7fcf68e1181fe3b999da2372aa1d85220a
+author Mock Author <mock@example.com> 2026-08-19 19:50:00 +0530
+committer Mock Author <mock@example.com> 2026-08-19 19:50:00 +0530
+
+    head sha from webhook
