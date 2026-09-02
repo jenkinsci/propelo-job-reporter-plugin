@@ -18,7 +18,7 @@ import io.jenkins.plugins.propelo.commons.service.JobRunCompleteNotificationServ
 import io.jenkins.plugins.propelo.commons.service.JobRunGitChangesService;
 import io.jenkins.plugins.propelo.commons.service.JobRunParserService;
 import io.jenkins.plugins.propelo.commons.service.JobRunPerforceChangesService;
-import io.jenkins.plugins.propelo.commons.service.JobRunScmCommitsFallbackService;
+import io.jenkins.plugins.propelo.commons.service.JobRunScmCommitIdsService;
 import io.jenkins.plugins.propelo.commons.service.JobSCMService;
 import io.jenkins.plugins.propelo.commons.service.ProxyConfigService;
 import io.jenkins.plugins.propelo.commons.utils.DateUtils;
@@ -181,20 +181,19 @@ public class LevelOpsRunListener extends RunListener<Run> {
 
             JobRunCompleteData jobRunCompleteData = gatherJobRunCompleteData(run, jobRunDetail);
             scmCommitIds.addAll(perforceCommitIds);
-            if (scmCommitIds.isEmpty()) {
-                try {
-                    JobRunScmCommitsFallbackService fallbackService = new JobRunScmCommitsFallbackService();
-                    List<String> fallbackCommitIds = fallbackService.resolveFallbackCommitIds(run);
-                    if (fallbackCommitIds != null && !fallbackCommitIds.isEmpty()) {
-                        scmCommitIds.addAll(fallbackCommitIds);
-                        LOGGER.log(Level.FINE, "Using {0} fallback scm commit ids; changelog parsing was empty",
-                                fallbackCommitIds.size());
-                    }
-                } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Failed to resolve fallback scm commit ids; continuing without them", e);
+            try {
+                JobRunScmCommitIdsService scmCommitIdsService = new JobRunScmCommitIdsService();
+                List<String> explicitCommitIds = scmCommitIdsService.resolveExplicitCommitIds(run);
+                scmCommitIds = scmCommitIdsService.mergeCommitIds(scmCommitIds, explicitCommitIds);
+                if (explicitCommitIds != null && !explicitCommitIds.isEmpty()) {
+                    LOGGER.log(Level.FINE, "Merged {0} explicit scm commit ids for current job run; total scm commit ids={1}",
+                            new Object[]{explicitCommitIds.size(), scmCommitIds.size()});
                 }
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING,
+                        "Failed to resolve explicit scm commit ids for current job run; continuing with discovered commits", e);
             }
-            LOGGER.log(Level.FINEST, "scmCommitIds after fallback = {0}", scmCommitIds);
+            LOGGER.log(Level.FINEST, "scmCommitIds after explicit merge = {0}", scmCommitIds);
             JobLogsService jobLogsService = new JobLogsService();
             UUID failedLogFileUUID = null;
 
