@@ -53,4 +53,79 @@ public class JobFullNameConverter {
         }
         return normalizedFullName;
     }
+
+    private static final String BRANCHES_PATH_SEGMENT = "/branches/";
+
+    /**
+     * Replaces the filesystem-mangled branch segment in {@code job_full_name} with the Jenkins URL-safe
+     * encoded SCM branch (e.g. {@code feature%2Fmaac-mute} instead of {@code feature-maac-mute.l94old}).
+     */
+    public static String replaceEncodedBranchInJobFullName(String jobFullName,
+                                                           String encodedBranchName,
+                                                           String resolvedBranchName) {
+        if (StringUtils.isBlank(jobFullName)
+                || StringUtils.isBlank(encodedBranchName)
+                || StringUtils.isBlank(resolvedBranchName)) {
+            return jobFullName;
+        }
+        if (encodedBranchName.equals(resolvedBranchName)) {
+            return jobFullName;
+        }
+        String branchesSuffix = BRANCHES_PATH_SEGMENT + encodedBranchName;
+        if (!jobFullName.endsWith(branchesSuffix)) {
+            return jobFullName;
+        }
+        String resolvedBranchSegment = encodeBranchPathSegment(resolvedBranchName);
+        return jobFullName.substring(0, jobFullName.length() - branchesSuffix.length())
+                + BRANCHES_PATH_SEGMENT
+                + resolvedBranchSegment;
+    }
+
+    /**
+     * URL path-segment encoding aligned with Jenkins {@code NameEncoder} for multibranch job names.
+     */
+    static String encodeBranchPathSegment(String branchName) {
+        if (StringUtils.isBlank(branchName)) {
+            return branchName;
+        }
+        if ("".equals(branchName)) {
+            return "%00";
+        }
+        if (".".equals(branchName)) {
+            return "%2E";
+        }
+        if ("..".equals(branchName)) {
+            return "%2E.";
+        }
+        StringBuilder encoded = new StringBuilder(branchName.length() + 16);
+        for (char character : branchName.toCharArray()) {
+            switch (character) {
+                case '#':
+                    encoded.append("%23");
+                    break;
+                case '%':
+                    encoded.append("%25");
+                    break;
+                case '/':
+                    encoded.append("%2F");
+                    break;
+                case '?':
+                    encoded.append("%3F");
+                    break;
+                case '[':
+                    encoded.append("%5B");
+                    break;
+                case ']':
+                    encoded.append("%5D");
+                    break;
+                case '\\':
+                    encoded.append("%5C");
+                    break;
+                default:
+                    encoded.append(character);
+                    break;
+            }
+        }
+        return encoded.toString();
+    }
 }

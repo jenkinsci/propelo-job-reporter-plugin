@@ -262,6 +262,9 @@ public class JobRunParserService {
             return;
         }
         jobNameDetails.setBranchName(resolvedBranchName);
+        jobNameDetails.setJobFullName(
+                JobFullNameConverter.replaceEncodedBranchInJobFullName(
+                        jobNameDetails.getJobFullName(), encodedBranchName, resolvedBranchName));
         jobNameDetails.setJobNormalizedFullName(
                 JobFullNameConverter.replaceEncodedBranchInNormalizedName(
                         jobNameDetails.getJobNormalizedFullName(), encodedBranchName, resolvedBranchName));
