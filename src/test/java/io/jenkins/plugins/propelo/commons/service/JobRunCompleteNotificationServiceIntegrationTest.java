@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +30,7 @@ public class JobRunCompleteNotificationServiceIntegrationTest {
         scmCommitIds.add("scm-commit-id-1");
         File completeDataZipFile = null;
         try {
-            completeDataZipFile = File.createTempFile("tmp", ".zip");
+            completeDataZipFile = Files.createTempFile("tmp", ".zip").toFile();
             String apiKey = "eyJrZXkiOiJGakhiQHo3czV0cV9NempQcVFuZ0BzXkFedll1MG9hM19rSnBxaTMmZjhDSTFRWlp3OCIsImlkIjoiNDBlNThjNWMtYjJmOS00NjY0LWFmNDYtOGU0ZDlhN2YyZjVlIiwiY29tcGFueSI6ImZvbyJ9";
             List<JobRunParam> jobRunParams = new ArrayList<>();
             jobRunParams.add(new JobRunParam("StringParameterValue", "env_name", "UAT"));
