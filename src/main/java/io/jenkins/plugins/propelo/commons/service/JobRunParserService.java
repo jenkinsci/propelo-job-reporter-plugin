@@ -249,6 +249,26 @@ public class JobRunParserService {
         }
     }
 
+    private void applyResolvedScmBranchName(Run<?, ?> build, JobNameDetails jobNameDetails) {
+        if (jobNameDetails == null) {
+            return;
+        }
+        String encodedBranchName = jobNameDetails.getBranchName();
+        if (StringUtils.isBlank(encodedBranchName)) {
+            return;
+        }
+        String resolvedBranchName = ScmBranchNameResolver.resolveBranchName(build);
+        if (StringUtils.isBlank(resolvedBranchName) || resolvedBranchName.equals(encodedBranchName)) {
+            return;
+        }
+        jobNameDetails.setBranchName(resolvedBranchName);
+        jobNameDetails.setJobNormalizedFullName(
+                JobFullNameConverter.replaceEncodedBranchInNormalizedName(
+                        jobNameDetails.getJobNormalizedFullName(), encodedBranchName, resolvedBranchName));
+        LOGGER.log(Level.FINE, "Resolved SCM branch name from {0} to {1}",
+                new Object[] {encodedBranchName, resolvedBranchName});
+    }
+
     /*
     Will return null in case of errors.
      */
@@ -269,6 +289,7 @@ public class JobRunParserService {
             LOGGER.log(Level.SEVERE, "Error parsing job name, branch name, job full path!", e);
             return null;
         }
+        applyResolvedScmBranchName(build, jobNameDetails);
         List<JobRunParam> jobRunParams = parseParameters(build);
         String currentUser = getCurrentUser(build);
         LOGGER.finest("currentUser = " + currentUser);
