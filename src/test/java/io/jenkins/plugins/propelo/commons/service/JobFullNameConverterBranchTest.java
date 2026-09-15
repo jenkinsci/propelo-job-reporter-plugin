@@ -30,4 +30,14 @@ public class JobFullNameConverterBranchTest {
                 "SEI-MB/jobs/SYSID-DEMO-GH-BUILD/jobs/digital-internal-transfer-data-service/branches/feature%2Fmaac-mute",
                 actual);
     }
+
+    @Test
+    public void shouldReplaceEncodedBranchInNestedJobFullName() {
+        String jobFullName = "SEI-MB/jobs/SYSID-DEMO-GH-BUILD/jobs/digital-internal-transfer-data-service/branches/feature-maac-mute.l94old/jobs/sub-job";
+        String actual = JobFullNameConverter.replaceEncodedBranchInJobFullName(
+                jobFullName, "feature-maac-mute.l94old", "feature/maac-mute");
+        Assert.assertEquals(
+                "SEI-MB/jobs/SYSID-DEMO-GH-BUILD/jobs/digital-internal-transfer-data-service/branches/feature%2Fmaac-mute/jobs/sub-job",
+                actual);
+    }
 }

@@ -36,12 +36,13 @@ public final class ScmBranchNameResolver {
             return null;
         }
 
-        String branchName = resolveFromEnvironment(build);
+        // Prefer the SCM head: it is cheap and does not require pipeline execution state.
+        String branchName = resolveFromScmHead(job);
         if (StringUtils.isNotBlank(branchName)) {
             return branchName;
         }
 
-        return resolveFromScmHead(job);
+        return resolveFromEnvironment(build);
     }
 
     private static String resolveFromEnvironment(Run<?, ?> build) {
@@ -66,6 +67,7 @@ public final class ScmBranchNameResolver {
     }
 
     private static String resolveFromScmHead(Job<?, ?> job) {
+        String jobFullName = (job != null) ? job.getFullName() : "unknown";
         try {
             SCMHead head = SCMHead.HeadByItem.findHead(job);
             if (head == null) {
@@ -79,7 +81,7 @@ public final class ScmBranchNameResolver {
             }
             return head.getName();
         } catch (RuntimeException runtimeException) {
-            LOGGER.log(Level.FINE, "Unable to resolve SCM head for job=" + job.getFullName(), runtimeException);
+            LOGGER.log(Level.FINE, "Unable to resolve SCM head for job=" + jobFullName, runtimeException);
             return null;
         }
     }
