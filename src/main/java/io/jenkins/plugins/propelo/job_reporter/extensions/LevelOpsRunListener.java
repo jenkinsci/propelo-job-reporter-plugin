@@ -201,8 +201,16 @@ public class LevelOpsRunListener extends RunListener<Run> {
             PropeloStageMarkerAction markerAction = run.getAction(PropeloStageMarkerAction.class);
             if (markerAction != null && !markerAction.isEmpty()) {
                 phaseEvents = markerAction.snapshot();
-                // Per-phase commits live in phase_events; keep top-level empty for ETL fan-out.
-                scmCommitIds = new ArrayList<>();
+                // Only clear top-level scm_commit_ids when a CI phase event already carries
+                // commits. Partial adoption (CD-only markers) must keep discovered commits so
+                // correlation is not wiped while normalizeCommits leaves CD scm_commit_ids empty.
+                // Deploy order: ship ETL/ingestion phase_events support before (or with) this
+                // plugin behavior for jobs that emit CI phase commits; otherwise dual-write by
+                // keeping top-level commits until backend is ready.
+                boolean clearTopLevelCommits = hasCiPhaseWithCommits(phaseEvents);
+                if (clearTopLevelCommits) {
+                    scmCommitIds = new ArrayList<>();
+                }
                 boolean hasCi = false;
                 boolean hasCd = false;
                 for (PhaseEvent phaseEvent : phaseEvents) {
@@ -221,8 +229,9 @@ public class LevelOpsRunListener extends RunListener<Run> {
                 if (hasCd) {
                     cd = Boolean.TRUE;
                 }
-                LOGGER.log(Level.FINE, "Collected {0} phase_events for jobFullName={1}, build={2}",
-                        new Object[]{phaseEvents.size(), jobRunDetail.getJobFullName(), jobRunDetail.getBuildNumber()});
+                LOGGER.log(Level.FINE, "Collected {0} phase_events for jobFullName={1}, build={2}, clearedTopLevelCommits={3}",
+                        new Object[]{phaseEvents.size(), jobRunDetail.getJobFullName(), jobRunDetail.getBuildNumber(),
+                                clearTopLevelCommits});
             }
 
             JobLogsService jobLogsService = new JobLogsService();
@@ -250,6 +259,29 @@ public class LevelOpsRunListener extends RunListener<Run> {
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    /**
+     * Top-level scm_commit_ids may be cleared only when CI phase_events already carry commits
+     * (safe fan-out). CD-only / empty-CI markers must not wipe discovered commits.
+     */
+    static boolean hasCiPhaseWithCommits(List<PhaseEvent> phaseEvents) {
+        if (phaseEvents == null || phaseEvents.isEmpty()) {
+            return false;
+        }
+        for (PhaseEvent phaseEvent : phaseEvents) {
+            if (phaseEvent == null || phaseEvent.getPhase() == null) {
+                continue;
+            }
+            if (!"CI".equalsIgnoreCase(phaseEvent.getPhase())) {
+                continue;
+            }
+            List<String> commits = phaseEvent.getScmCommitIds();
+            if (commits != null && !commits.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

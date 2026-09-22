@@ -8,7 +8,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Run-scoped store for {@code seiReportPhase} markers. Synchronized for concurrent stages.
+ * Run-scoped store for {@code seiReportPhase} markers.
+ * Instance methods are synchronized for concurrent stages; callers must also
+ * synchronize on the {@link hudson.model.Run} when get-or-creating this action
+ * so parallel stages share a single instance.
  */
 public class PropeloStageMarkerAction extends InvisibleAction {
     private final List<PhaseEvent> events = new ArrayList<>();

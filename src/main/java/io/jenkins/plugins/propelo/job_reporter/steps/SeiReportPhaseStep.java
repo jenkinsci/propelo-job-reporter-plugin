@@ -3,8 +3,10 @@ package io.jenkins.plugins.propelo.job_reporter.steps;
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jenkins.plugins.propelo.commons.models.jenkins.saas.CiCdJobRunArtifact;
 import io.jenkins.plugins.propelo.commons.models.jenkins.saas.PhaseEvent;
+import io.jenkins.plugins.propelo.commons.utils.JsonUtils;
 import io.jenkins.plugins.propelo.job_reporter.extensions.PropeloStageMarkerAction;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.Step;
@@ -34,6 +36,7 @@ import java.util.logging.Logger;
 public class SeiReportPhaseStep extends Step implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(SeiReportPhaseStep.class.getName());
+    private static final ObjectMapper MAPPER = JsonUtils.buildObjectMapper();
 
     private final String phase;
     private String environment;
@@ -220,20 +223,32 @@ public class SeiReportPhaseStep extends Step implements Serializable {
                     convertArtifacts(step.getArtifacts())
             );
 
-            PropeloStageMarkerAction action = run.getAction(PropeloStageMarkerAction.class);
-            if (action == null) {
-                action = new PropeloStageMarkerAction();
-                run.addAction(action);
+            // Serialize get-or-create on the Run so parallel stages share one action instance.
+            PropeloStageMarkerAction action;
+            synchronized (run) {
+                action = run.getAction(PropeloStageMarkerAction.class);
+                if (action == null) {
+                    action = new PropeloStageMarkerAction();
+                    run.addAction(action);
+                }
             }
             action.append(event);
 
             TaskListener listener = getContext().get(TaskListener.class);
+            String eventJson;
+            try {
+                eventJson = MAPPER.writeValueAsString(event);
+            } catch (Exception e) {
+                eventJson = String.valueOf(event);
+                LOGGER.log(Level.WARNING, "Failed to serialize phase event payload for logging", e);
+            }
             if (listener != null) {
                 listener.getLogger().println(String.format(
                         "seiReportPhase: recorded %s phase marker (start=%d, end=%d)",
                         normalizedPhase, event.getStartTime(), event.getEndTime()));
+                listener.getLogger().println("seiReportPhase: payload=" + eventJson);
             }
-            LOGGER.log(Level.FINE, "Recorded phase marker {0} for run {1}", new Object[]{event, run});
+            LOGGER.log(Level.INFO, "Recorded phase marker for run {0}: {1}", new Object[]{run, eventJson});
             return null;
         }
     }
