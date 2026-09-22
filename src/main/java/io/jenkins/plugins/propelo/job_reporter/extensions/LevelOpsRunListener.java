@@ -9,6 +9,7 @@ import io.jenkins.plugins.propelo.commons.models.JobRunCompleteData;
 import io.jenkins.plugins.propelo.commons.models.JobRunDetail;
 import io.jenkins.plugins.propelo.commons.models.blue_ocean.JobRun;
 import io.jenkins.plugins.propelo.commons.models.jenkins.saas.CiCdJobRunArtifact;
+import io.jenkins.plugins.propelo.commons.models.jenkins.saas.PhaseEvent;
 import io.jenkins.plugins.propelo.commons.service.GenericRequestService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsConfigSCMService;
 import io.jenkins.plugins.propelo.commons.service.JenkinsInstanceGuidService;
@@ -43,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -194,6 +196,35 @@ public class LevelOpsRunListener extends RunListener<Run> {
                         "Failed to resolve explicit scm commit ids for current job run; continuing with discovered commits", e);
             }
             LOGGER.log(Level.FINEST, "scmCommitIds after explicit merge = {0}", scmCommitIds);
+
+            List<PhaseEvent> phaseEvents = Collections.emptyList();
+            PropeloStageMarkerAction markerAction = run.getAction(PropeloStageMarkerAction.class);
+            if (markerAction != null && !markerAction.isEmpty()) {
+                phaseEvents = markerAction.snapshot();
+                // Per-phase commits live in phase_events; keep top-level empty for ETL fan-out.
+                scmCommitIds = new ArrayList<>();
+                boolean hasCi = false;
+                boolean hasCd = false;
+                for (PhaseEvent phaseEvent : phaseEvents) {
+                    if (phaseEvent == null || phaseEvent.getPhase() == null) {
+                        continue;
+                    }
+                    if ("CI".equalsIgnoreCase(phaseEvent.getPhase())) {
+                        hasCi = true;
+                    } else if ("CD".equalsIgnoreCase(phaseEvent.getPhase())) {
+                        hasCd = true;
+                    }
+                }
+                if (hasCi) {
+                    ci = Boolean.TRUE;
+                }
+                if (hasCd) {
+                    cd = Boolean.TRUE;
+                }
+                LOGGER.log(Level.FINE, "Collected {0} phase_events for jobFullName={1}, build={2}",
+                        new Object[]{phaseEvents.size(), jobRunDetail.getJobFullName(), jobRunDetail.getBuildNumber()});
+            }
+
             JobLogsService jobLogsService = new JobLogsService();
             UUID failedLogFileUUID = null;
 
@@ -206,7 +237,7 @@ public class LevelOpsRunListener extends RunListener<Run> {
 
             performJobRunCompleteNotification(jobRunDetail, scmResult.getUrl(), scmResult.getUserName(),
                     getJenkinsInstanceGuid(), plugin.getJenkinsInstanceName(), getJenkinsInstanceUrl(),
-                    jobRunCompleteData, scmCommitIds, artifacts, ci, cd, failedLogFileUUID, proxyConfig);
+                    jobRunCompleteData, scmCommitIds, artifacts, ci, cd, phaseEvents, failedLogFileUUID, proxyConfig);
             // deleting data directory
             deleteJobRunDataCompleteDirectoryContents();
             //performJobRunCompleteNotification fn logs have this.
@@ -254,7 +285,7 @@ public class LevelOpsRunListener extends RunListener<Run> {
 
     private void performJobRunCompleteNotification(JobRunDetail jobRunDetail, String scmUrl, String scmUserId, String jenkinsInstanceGuid, String jenkinsInstanceName,
                                                    String jenkinsInstanceUrl, JobRunCompleteData jobRunCompleteData, List<String> scmCommitIds,
-                                                   List<CiCdJobRunArtifact> artifacts, Boolean ci, Boolean cd,
+                                                   List<CiCdJobRunArtifact> artifacts, Boolean ci, Boolean cd, List<PhaseEvent> phaseEvents,
                                                    UUID failedLogFileUUID, final ProxyConfigService.ProxyConfig proxyConfig) {
 
         LOGGER.finest("Send Job Runs Completed Notifications to Propelo is true, performing job run complete notification");
@@ -269,7 +300,7 @@ public class LevelOpsRunListener extends RunListener<Run> {
             long jobRunNumber = (jobRunDetail != null) ? jobRunDetail.getBuildNumber() : 0;
             runIds = jobRunCompleteNotificationService.submitJobRunCompleteRequest(plugin.getLevelOpsApiKey().getPlainText(), jobRunDetail,
                     scmUrl, scmUserId, jenkinsInstanceGuid, jenkinsInstanceName, jenkinsInstanceUrl, plugin.isTrustAllCertificates(), jobRunCompleteData,
-                    scmCommitIds, artifacts, ci, cd, failedLogFileUUID, proxyConfig);
+                    scmCommitIds, artifacts, ci, cd, phaseEvents, failedLogFileUUID, proxyConfig);
             LOGGER.log(Level.FINE, "Successfully submitted job run complete event to LevelOps, jobFullName = {0}, jobRunNumber = {1}, runIds = {2}", new Object[]{jobFullName, jobRunNumber, runIds});
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error sending job run complete event!", e);
