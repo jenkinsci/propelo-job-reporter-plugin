@@ -4,40 +4,47 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * End-of-stage phase marker captured by {@code seiReportPhase} for single-pipeline CI/CD correlation.
+ * Lists are always mutable {@link ArrayList}s so Jenkins XStream can persist this on {@link hudson.model.Run}.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PhaseEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("phase")
-    private final String phase;
+    private String phase;
 
     @JsonProperty("environment")
-    private final String environment;
+    private String environment;
 
     @JsonProperty("stage_name")
-    private final String stageName;
+    private String stageName;
 
     @JsonProperty("start_time")
-    private final long startTime;
+    private long startTime;
 
     @JsonProperty("end_time")
-    private final long endTime;
+    private long endTime;
 
     @JsonProperty("result")
-    private final String result;
+    private String result;
 
     @JsonProperty("scm_commit_ids")
-    private final List<String> scmCommitIds;
+    private List<String> scmCommitIds;
 
     @JsonProperty("artifacts")
-    private final List<CiCdJobRunArtifact> artifacts;
+    private List<CiCdJobRunArtifact> artifacts;
+
+    /** Required for Jenkins XStream persistence. */
+    public PhaseEvent() {
+        this.scmCommitIds = new ArrayList<>();
+        this.artifacts = new ArrayList<>();
+    }
 
     public PhaseEvent(String phase, String environment, String stageName, long startTime, long endTime,
                       String result, List<String> scmCommitIds, List<CiCdJobRunArtifact> artifacts) {
@@ -47,8 +54,8 @@ public class PhaseEvent implements Serializable {
         this.startTime = startTime;
         this.endTime = endTime;
         this.result = result;
-        this.scmCommitIds = scmCommitIds == null ? Collections.emptyList() : scmCommitIds;
-        this.artifacts = artifacts == null ? Collections.emptyList() : artifacts;
+        this.scmCommitIds = scmCommitIds == null ? new ArrayList<>() : new ArrayList<>(scmCommitIds);
+        this.artifacts = artifacts == null ? new ArrayList<>() : new ArrayList<>(artifacts);
     }
 
     public String getPhase() {

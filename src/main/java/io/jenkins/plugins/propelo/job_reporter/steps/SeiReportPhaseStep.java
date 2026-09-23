@@ -20,7 +20,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -135,10 +134,10 @@ public class SeiReportPhaseStep extends Step implements Serializable {
     }
 
     static List<CiCdJobRunArtifact> convertArtifacts(List<Map<String, Object>> rawArtifacts) {
-        if (rawArtifacts == null || rawArtifacts.isEmpty()) {
-            return Collections.emptyList();
-        }
         List<CiCdJobRunArtifact> converted = new ArrayList<>();
+        if (rawArtifacts == null || rawArtifacts.isEmpty()) {
+            return converted;
+        }
         for (Map<String, Object> raw : rawArtifacts) {
             if (raw == null) {
                 continue;
@@ -158,13 +157,13 @@ public class SeiReportPhaseStep extends Step implements Serializable {
     }
 
     static List<String> normalizeCommits(String phase, List<String> scmCommitIds) {
+        List<String> normalized = new ArrayList<>();
         if (!"CI".equals(normalizePhase(phase))) {
-            return Collections.emptyList();
+            return normalized;
         }
         if (scmCommitIds == null || scmCommitIds.isEmpty()) {
-            return Collections.emptyList();
+            return normalized;
         }
-        List<String> normalized = new ArrayList<>();
         for (String commitId : scmCommitIds) {
             if (StringUtils.isNotBlank(commitId)) {
                 normalized.add(commitId.trim());

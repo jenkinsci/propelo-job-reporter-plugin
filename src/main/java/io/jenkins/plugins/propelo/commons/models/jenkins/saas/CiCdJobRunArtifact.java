@@ -3,6 +3,8 @@ package io.jenkins.plugins.propelo.commons.models.jenkins.saas;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -11,31 +13,36 @@ import java.util.Objects;
  * Matches etl-spark JobRunCompleteRequest artifacts shape.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CiCdJobRunArtifact {
+public class CiCdJobRunArtifact implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @JsonProperty("input")
-    private final Boolean input;
+    private Boolean input;
 
     @JsonProperty("output")
-    private final Boolean output;
+    private Boolean output;
 
     @JsonProperty("type")
-    private final String type;
+    private String type;
 
     @JsonProperty("location")
-    private final String location;
+    private String location;
 
     @JsonProperty("name")
-    private final String name;
+    private String name;
 
     @JsonProperty("qualifier")
-    private final String qualifier;
+    private String qualifier;
 
     @JsonProperty("hash")
-    private final String hash;
+    private String hash;
 
     @JsonProperty("metadata")
-    private final Map<String, String> metadata;
+    private Map<String, String> metadata;
+
+    /** Required for Jenkins XStream persistence. */
+    public CiCdJobRunArtifact() {
+    }
 
     public CiCdJobRunArtifact(Boolean input, Boolean output, String type, String location, String name,
                               String qualifier, String hash, Map<String, String> metadata) {
@@ -46,7 +53,7 @@ public class CiCdJobRunArtifact {
         this.name = name;
         this.qualifier = qualifier;
         this.hash = hash;
-        this.metadata = metadata;
+        this.metadata = metadata == null ? null : new HashMap<>(metadata);
     }
 
     public Boolean getInput() {
