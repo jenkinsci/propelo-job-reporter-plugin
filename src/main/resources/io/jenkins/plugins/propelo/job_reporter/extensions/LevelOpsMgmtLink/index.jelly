@@ -26,6 +26,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-PROD6">SEI-Harness-PROD6</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
+                                    <option value="SEI-Harness-QA0">SEI-Harness-QA0</option>
                                 </j:when>
                                 <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD1'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
@@ -35,6 +36,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-PROD6">SEI-Harness-PROD6</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
+                                    <option value="SEI-Harness-QA0">SEI-Harness-QA0</option>
                                 </j:when>
                                 <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD2'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
@@ -44,6 +46,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-PROD6">SEI-Harness-PROD6</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
+                                    <option value="SEI-Harness-QA0">SEI-Harness-QA0</option>
                                 </j:when>
                                 <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD3'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
@@ -53,6 +56,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-PROD6">SEI-Harness-PROD6</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
+                                    <option value="SEI-Harness-QA0">SEI-Harness-QA0</option>
                                 </j:when>
                                 <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD4'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
@@ -62,6 +66,7 @@
                                     <option value="SEI-Harness-PROD4" selected="">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-PROD6">SEI-Harness-PROD6</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
+                                    <option value="SEI-Harness-QA0">SEI-Harness-QA0</option>
                                 </j:when>
                                 <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_PROD6'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
@@ -71,6 +76,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-PROD6" selected="">SEI-Harness-PROD6</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
+                                    <option value="SEI-Harness-QA0">SEI-Harness-QA0</option>
                                 </j:when>
                                 <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_EU1'}">
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
@@ -80,6 +86,18 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-PROD6">SEI-Harness-PROD6</option>
                                     <option value="SEI-Harness-EU1" selected="">SEI-Harness-EU1</option>
+                                    <option value="SEI-Harness-QA0">SEI-Harness-QA0</option>
+                                </j:when>
+
+                                <j:when test="${it.configuration.applicationType == 'SEI_HARNESS_QA0'}">
+                                    <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
+                                    <option value="SEI-Harness-PROD1">SEI-Harness-PROD1</option>
+                                    <option value="SEI-Harness-PROD2">SEI-Harness-PROD2</option>
+                                    <option value="SEI-Harness-PROD3">SEI-Harness-PROD3</option>
+                                    <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
+                                    <option value="SEI-Harness-PROD6">SEI-Harness-PROD6</option>
+                                    <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
+                                    <option value="SEI-Harness-QA0" selected="">SEI-Harness-QA0</option>
                                 </j:when>
                                 <j:otherwise>
                                     <option value="SEI-Harness-PROD0">SEI-Harness-PROD0</option>
@@ -89,6 +107,7 @@
                                     <option value="SEI-Harness-PROD4">SEI-Harness-PROD4</option>
                                     <option value="SEI-Harness-PROD6">SEI-Harness-PROD6</option>
                                     <option value="SEI-Harness-EU1">SEI-Harness-EU1</option>
+                                    <option value="SEI-Harness-QA0">SEI-Harness-QA0</option>
                                 </j:otherwise>
                             </j:choose>
                         </select>

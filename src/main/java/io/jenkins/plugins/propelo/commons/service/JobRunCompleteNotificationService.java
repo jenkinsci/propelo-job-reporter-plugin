@@ -9,6 +9,7 @@ import io.jenkins.plugins.propelo.commons.models.jenkins.saas.CiCdJobRunArtifact
 import io.jenkins.plugins.propelo.commons.models.jenkins.saas.GenericResponse;
 import io.jenkins.plugins.propelo.commons.models.jenkins.saas.JobRunCompleteRequest;
 import io.jenkins.plugins.propelo.commons.models.jenkins.saas.JobRunCompleteResponse;
+import io.jenkins.plugins.propelo.commons.models.jenkins.saas.PhaseEvent;
 
 import org.apache.commons.io.FileUtils;
 
@@ -64,6 +65,7 @@ public class JobRunCompleteNotificationService {
                                                     String jenkinsInstanceGuid, String jenkinsInstanceName, String jenkinsInstanceUrl, final boolean trustAllCertificates,
                                                     JobRunCompleteData jobRunCompleteData,
                                                     List<String> scmCommitIds, List<CiCdJobRunArtifact> artifacts, Boolean ci, Boolean cd,
+                                                    List<PhaseEvent> phaseEvents,
                                                     UUID failedLogFileUUID, final ProxyConfigService.ProxyConfig proxyConfig) throws IOException {
         File jobRunCompleteDataDirectory = null;
         File jobRunCompleteDataZipFile = null;
@@ -77,6 +79,9 @@ public class JobRunCompleteNotificationService {
                     jobRunDetail.getJobRunParams(), scmUrl, scmUserId, jobRunDetail.getStartTime(), jobRunDetail.getResult(), jobRunDetail.getDuration(), jobRunDetail.getBuildNumber(), jenkinsInstanceGuid, jenkinsInstanceName, jenkinsInstanceUrl, jobRun,
                     jobRunDetail.getJobFullName(), jobRunDetail.getJobNormalizedFullName(), jobRunDetail.getBranchName(), jobRunDetail.getModuleName(), scmCommitIds, jobRunDetail.getTriggerChain(),
                     artifacts, ci, cd);
+            if (phaseEvents != null && !phaseEvents.isEmpty()) {
+                jobRunCompleteRequest.setPhaseEvents(phaseEvents);
+            }
 
             String payload;
             try {

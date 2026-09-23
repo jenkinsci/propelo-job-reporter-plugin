@@ -75,6 +75,9 @@ public class JobRunCompleteRequest {
     @JsonProperty("cd")
     private final Boolean cd;
 
+    @JsonProperty("phase_events")
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+    private List<PhaseEvent> phaseEvents;
 
     public JobRunCompleteRequest(String jobName, String userId, List<JobRunParam> jobRunParams, String repoUrl, String scmUserId,
                                  long startTime, String result, long duration, long buildNumber, String jenkinsInstanceGuid, String jenkinsInstanceName, String jenkinsInstanceUrl, JobRun jobRun, String jobFullName, String jobNormalizedFullName, String branchName, String moduleName, List<String> scmCommitIds, Set<JobTrigger> triggerChain,
@@ -189,5 +192,13 @@ public class JobRunCompleteRequest {
 
     public Boolean getCd() {
         return cd;
+    }
+
+    public List<PhaseEvent> getPhaseEvents() {
+        return phaseEvents;
+    }
+
+    public void setPhaseEvents(List<PhaseEvent> phaseEvents) {
+        this.phaseEvents = phaseEvents;
     }
 }

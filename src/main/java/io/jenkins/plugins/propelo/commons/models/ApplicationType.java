@@ -10,7 +10,8 @@ public enum ApplicationType {
     SEI_HARNESS_PROD3("SEI-HARNESS-PROD3", "https://app3.harness.io/sei/api"),
     SEI_HARNESS_PROD4("SEI-HARNESS-PROD4", "https://prod4.harness.io/sei/api"),
     SEI_HARNESS_PROD6("SEI-HARNESS-PROD6", "https://prod6.harness.io/sei/api"),
-    SEI_HARNESS_EU1("SEI-HARNESS-EU1", "https://accounts.eu.harness.io/sei/api");
+    SEI_HARNESS_EU1("SEI-HARNESS-EU1", "https://accounts.eu.harness.io/sei/api"),
+    SEI_HARNESS_QA0("SEI-HARNESS-QA0", "https://qa0.harness.io/sei/api");
 
     private String applicationType;
     private String targetUrl;

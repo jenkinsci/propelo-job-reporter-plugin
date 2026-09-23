@@ -41,6 +41,10 @@ public class LevelOpsPluginConfigServiceTest {
         CONFIGURATION.setApplicationType(ApplicationType.fromString("SEI-HARNESS-EU1"));
         applicationType = PropeloPluginImpl.getInstance().getApplicationType();
         Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_EU1);
+
+        CONFIGURATION.setApplicationType(ApplicationType.fromString("SEI-HARNESS-QA0"));
+        applicationType = PropeloPluginImpl.getInstance().getApplicationType();
+        Assert.assertEquals(applicationType, ApplicationType.SEI_HARNESS_QA0);
     }
 
     @Test(expected = IllegalArgumentException.class)
