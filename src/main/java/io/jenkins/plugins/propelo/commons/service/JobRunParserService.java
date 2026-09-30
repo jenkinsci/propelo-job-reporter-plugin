@@ -2,6 +2,8 @@ package io.jenkins.plugins.propelo.commons.service;
 
 import com.google.common.base.Objects;
 import hudson.model.Cause;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
 import hudson.model.Job;
 import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
@@ -42,8 +44,20 @@ public class JobRunParserService {
     private static final Pattern PATTERN_JOB_BRANCHES_BRANCH = Pattern.compile("^(.*)\\/branches\\/(.*)$");
     private static final Pattern PATTERN_JOB_MODULES_BRANCH = Pattern.compile("^(.*)\\/modules\\/(.*)$");
     private static final Pattern PATTERN_JOBS_JOB = Pattern.compile("^.*\\/jobs\\/(.*)$");
+    private static final String JOBS_PATH_SEPARATOR = "/jobs/";
+    private static final String BRANCHES_PATH_SEGMENT = "/branches/";
+    private static final String MODULES_PATH_SEGMENT = "/modules/";
+    private static final String NORMALIZED_PATH_SEPARATOR = "/";
 
     public JobRunParserService() {
+    }
+
+    protected Jenkins getJenkinsInstance() {
+        return Jenkins.getInstanceOrNull();
+    }
+
+    protected String resolveScmBranchName(Run<?, ?> build) {
+        return ScmBranchNameResolver.resolveBranchName(build);
     }
     private String extractJobRelativePath(File jobDir, File hudsonHome) throws IOException {
         if(hudsonHome == null){
@@ -257,7 +271,7 @@ public class JobRunParserService {
         if (StringUtils.isBlank(encodedBranchName)) {
             return;
         }
-        String resolvedBranchName = ScmBranchNameResolver.resolveBranchName(build);
+        String resolvedBranchName = resolveScmBranchName(build);
         if (StringUtils.isBlank(resolvedBranchName) || resolvedBranchName.equals(encodedBranchName)) {
             return;
         }
@@ -270,6 +284,143 @@ public class JobRunParserService {
                         jobNameDetails.getJobNormalizedFullName(), encodedBranchName, resolvedBranchName));
         LOGGER.log(Level.FINE, "Resolved SCM branch name from {0} to {1}",
                 new Object[] {encodedBranchName, resolvedBranchName});
+    }
+
+    JobNameDetails resolveFromItemHierarchy(Run<?, ?> build, JobNameDetails pathDerived) {
+        if (build == null || pathDerived == null) {
+            return pathDerived;
+        }
+        Job<?, ?> job = build.getParent();
+        if (job == null) {
+            return pathDerived;
+        }
+        Jenkins jenkins = getJenkinsInstance();
+        if (jenkins == null) {
+            return pathDerived;
+        }
+
+        List<String> parts = collectItemHierarchyParts(job, jenkins);
+        if (parts == null || parts.isEmpty()) {
+            return pathDerived;
+        }
+
+        JobNameDetails hierarchyDerived = buildJobNameDetailsFromHierarchy(build, pathDerived, parts);
+        if (hierarchyDerived == null) {
+            return pathDerived;
+        }
+
+        if (countNormalizedSegments(hierarchyDerived.getJobFullName())
+                != countNormalizedSegments(pathDerived.getJobFullName())) {
+            LOGGER.log(Level.FINE,
+                    "Item hierarchy structure mismatch for jobFullName path={0} hierarchy={1}, using path-derived names",
+                    new Object[] {pathDerived.getJobFullName(), hierarchyDerived.getJobFullName()});
+            return pathDerived;
+        }
+        return hierarchyDerived;
+    }
+
+    List<String> collectItemHierarchyParts(Item leafItem, Jenkins jenkins) {
+        List<String> partsLeafToRoot = new ArrayList<>();
+        Item current = leafItem;
+        while (current != null) {
+            partsLeafToRoot.add(current.getName());
+            ItemGroup<?> parentGroup = current.getParent();
+            if (parentGroup == null) {
+                return null;
+            }
+            if (parentGroup instanceof Jenkins) {
+                break;
+            }
+            if (!(parentGroup instanceof Item)) {
+                return null;
+            }
+            current = (Item) parentGroup;
+        }
+        Collections.reverse(partsLeafToRoot);
+        return partsLeafToRoot;
+    }
+
+    private JobNameDetails buildJobNameDetailsFromHierarchy(Run<?, ?> build, JobNameDetails pathDerived,
+            List<String> parts) {
+        if (pathDerived.getBranchName() != null) {
+            return buildBranchJobNameDetails(build, pathDerived, parts);
+        }
+        if (pathDerived.getModuleName() != null) {
+            return buildModuleJobNameDetails(parts);
+        }
+        return buildPlainJobNameDetails(parts);
+    }
+
+    private JobNameDetails buildBranchJobNameDetails(Run<?, ?> build, JobNameDetails pathDerived,
+            List<String> parts) {
+        if (parts.size() < 2) {
+            return null;
+        }
+        int branchLeafIndex = parts.size() - 1;
+        int projectIndex = parts.size() - 2;
+        String jobName = parts.get(projectIndex);
+        String branchLeafName = parts.get(branchLeafIndex);
+        String branchName = resolveScmBranchName(build);
+        if (StringUtils.isBlank(branchName)) {
+            branchName = pathDerived.getBranchName();
+        }
+        String jobFullNamePrefix = joinWithJobsPath(parts, 0, projectIndex + 1);
+        String jobFullName = jobFullNamePrefix + BRANCHES_PATH_SEGMENT + branchLeafName;
+        String jobNormalizedFullName = joinWithSlash(parts, 0, projectIndex + 1) + NORMALIZED_PATH_SEPARATOR + branchName;
+        return new JobNameDetails(jobName, branchName, jobFullName, null, jobNormalizedFullName);
+    }
+
+    private JobNameDetails buildModuleJobNameDetails(List<String> parts) {
+        if (parts.size() < 2) {
+            return null;
+        }
+        int moduleLeafIndex = parts.size() - 1;
+        int projectIndex = parts.size() - 2;
+        String jobName = parts.get(projectIndex);
+        String moduleName = parts.get(moduleLeafIndex);
+        String jobFullNamePrefix = joinWithJobsPath(parts, 0, projectIndex + 1);
+        String jobFullName = jobFullNamePrefix + MODULES_PATH_SEGMENT + moduleName;
+        String jobNormalizedFullName = joinWithSlash(parts, 0, moduleLeafIndex + 1);
+        return new JobNameDetails(jobName, null, jobFullName, moduleName, jobNormalizedFullName);
+    }
+
+    private JobNameDetails buildPlainJobNameDetails(List<String> parts) {
+        if (parts.isEmpty()) {
+            return null;
+        }
+        String jobName = parts.get(parts.size() - 1);
+        String jobFullName = joinWithJobsPath(parts, 0, parts.size());
+        String jobNormalizedFullName = joinWithSlash(parts, 0, parts.size());
+        return new JobNameDetails(jobName, null, jobFullName, null, jobNormalizedFullName);
+    }
+
+    private static String joinWithJobsPath(List<String> parts, int fromInclusive, int toExclusive) {
+        if (fromInclusive >= toExclusive || parts.isEmpty()) {
+            return StringUtils.EMPTY;
+        }
+        StringBuilder joined = new StringBuilder();
+        for (int index = fromInclusive; index < toExclusive; index++) {
+            if (index > fromInclusive) {
+                joined.append(JOBS_PATH_SEPARATOR);
+            }
+            joined.append(parts.get(index));
+        }
+        return joined.toString();
+    }
+
+    private static String joinWithSlash(List<String> parts, int fromInclusive, int toExclusive) {
+        if (fromInclusive >= toExclusive || parts.isEmpty()) {
+            return StringUtils.EMPTY;
+        }
+        return StringUtils.join(parts.subList(fromInclusive, toExclusive).iterator(), NORMALIZED_PATH_SEPARATOR);
+    }
+
+    private static int countNormalizedSegments(String jobFullName) {
+        String normalizedFullName = convertJobFullNameToJobNormalizedFullName(jobFullName);
+        if (StringUtils.isBlank(normalizedFullName)) {
+            return 0;
+        }
+        return normalizedFullName.split(NORMALIZED_PATH_SEPARATOR).length;
     }
 
     /*
@@ -293,6 +444,12 @@ public class JobRunParserService {
             return null;
         }
         applyResolvedScmBranchName(build, jobNameDetails);
+        try {
+            jobNameDetails = resolveFromItemHierarchy(build, jobNameDetails);
+        } catch (RuntimeException runtimeException) {
+            LOGGER.log(Level.FINE, "Unable to resolve job names from item hierarchy, using path-derived names",
+                    runtimeException);
+        }
         List<JobRunParam> jobRunParams = parseParameters(build);
         String currentUser = getCurrentUser(build);
         LOGGER.finest("currentUser = " + currentUser);
