@@ -148,6 +148,13 @@ public class JenkinsConfigSCMService {
         }
         //an instance of factory that gives a document builder
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+        try {
+            dbf.setFeature(FEATURE, true);
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException("ParserConfigurationException was thrown. The feature '"
+                    + FEATURE + "' is not supported by your XML processor.", e);
+        }
         //an instance of builder to parse the specified xml file
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(xmlConfigFile);
