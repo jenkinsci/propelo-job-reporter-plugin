@@ -86,6 +86,7 @@
         <!-- <changelist>999999-SNAPSHOT</changelist> -->
         <changelist></changelist>
         <product.build.sourceEncoding>UTF-8</product.build.sourceEncoding>
+        <spotbugs.skip>true</spotbugs.skip>
         <commons.validator.version>1.6</commons.validator.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.logging.version>1.2</commons.logging.version>
@@ -129,12 +130,10 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>mailer</artifactId>
-            <version>1.20</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>scm-api</artifactId>
-            <version>696.v778d637b_a_762</version>
             <optional>true</optional>
         </dependency>
         <!-- End: plugins-->
