@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.53</version>
+        <version>6.2236.v12dd4c483242</version>
         <relativePath />
     </parent>
 
@@ -86,23 +86,20 @@
         <!-- <changelist>999999-SNAPSHOT</changelist> -->
         <changelist></changelist>
         <product.build.sourceEncoding>UTF-8</product.build.sourceEncoding>
+        <spotbugs.skip>true</spotbugs.skip>
         <commons.validator.version>1.6</commons.validator.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.logging.version>1.2</commons.logging.version>
         <animal.sniffer.annotations>1.9</animal.sniffer.annotations>
-        <spotbugs.version>4.7.3</spotbugs.version>
-        <findbugs.skip>true</findbugs.skip>
-        <spotbugs.skip>true</spotbugs.skip>
-        <java.level>17</java.level>
-        <jenkins.version>2.426.3</jenkins.version>
+        <jenkins.version>2.504.3</jenkins.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.426.x</artifactId>
-                <version>3208.vb_21177d4b_cd9</version>
+                <artifactId>bom-2.504.x</artifactId>
+                <version>5983.v443959746f1f</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -113,27 +110,9 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version><!--$NO-MVN-MAN-VER$ -->
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.0-M6</version><!--$NO-MVN-MAN-VER$ -->
                 <configuration>
                     <goals>deploy</goals>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
                 </configuration>
             </plugin>
             <plugin>
@@ -151,12 +130,10 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>mailer</artifactId>
-            <version>1.20</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>scm-api</artifactId>
-            <version>696.v778d637b_a_762</version>
             <optional>true</optional>
         </dependency>
         <!-- End: plugins-->
@@ -188,7 +165,6 @@
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>${spotbugs.version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.mojo</groupId>
